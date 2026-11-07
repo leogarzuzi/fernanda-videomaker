@@ -53,3 +53,6 @@ A partir de 701px, os quatro trabalhos passam a ocupar cenas individuais com tex
 
 ## Sobre e polaroides
 Rodapé dos filmes e controle de pausa das prévias removidos. Por trás do olhar ganhou título principal e entrada vinculada ao scroll, primeiro da foto e depois do texto; logo centralizada na coluna. Abaixo de 701px, o nome usa Bebas Neue e Mrs Saint Delafield preservando as regras de posicionamento. Feedbacks destacam o print integral antes da frase, em polaroides com movimento contínuo da esquerda para a direita. O movimento pausa no hover, foco, abertura da mensagem, fora da tela e pelo controle de pausa; movimento reduzido mantém a faixa estática com rolagem manual.
+
+## Continuidade da abertura e refinamentos
+A área de retenção da abertura usa o mesmo vermelho da faixa e do manifesto, sem centralizar verticalmente a abertura dentro da retenção. Isso evita a faixa clara na passagem entre as seções, inclusive com alturas de viewport diferentes no Safari. Me conta a sua ideia centralizado na coluna, legenda dos feedbacks com mais contraste e carrossel sem pausa por hover. Pausa explícita, foco, diálogo e movimento reduzido continuam disponíveis.

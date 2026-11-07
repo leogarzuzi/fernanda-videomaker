@@ -342,7 +342,7 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
 .feedback-card .message-source{display:block;width:100%;padding:0;margin:0;background:#e9e1d5;border:0;border-radius:0;min-height:0}
 .feedback-card .message-source img{display:block;width:100%;height:auto;aspect-ratio:3/4.35;object-fit:contain;max-width:none;max-height:none;border:0;border-radius:0}
 .feedback-card blockquote{font:400 clamp(23px,2.1vw,29px)/1.25 var(--serif);margin:22px 8px 0;letter-spacing:-.035em;text-align:center}
-.feedback-rail:hover .feedback-track,.feedback-rail:focus-within .feedback-track,.feedback-rail.is-paused .feedback-track,.feedback-rail.is-offscreen .feedback-track,.feedback-rail.is-reading .feedback-track{animation-play-state:paused}
+.feedback-rail:focus-within .feedback-track,.feedback-rail.is-paused .feedback-track,.feedback-rail.is-offscreen .feedback-track,.feedback-rail.is-reading .feedback-track{animation-play-state:paused}
 .feedback-rail:has(:focus-visible){overflow-x:auto;touch-action:auto}
 .feedback-rail:has(:focus-visible) .feedback-track{animation:none;transform:translateX(-50%)}
 .carousel-play{display:none}
@@ -362,3 +362,9 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
   .feedback-group[aria-hidden="true"]{display:none}
 }
 @media(min-width:701px) and (max-height:650px){.about{height:auto}.about-stage{position:relative;height:auto;min-height:100svh;padding:35px 0}.about-grid{padding-top:30px}.portrait{width:min(100%,290px)}}
+
+/* Keep the hero's scroll hold continuous with the red invitation and manifesto. */
+.scene-shell.hero-scene{background:var(--accent)}
+.scene-shell.hero-scene>.hero{top:0}
+.about-text>.underlined{display:table;margin:18px auto 0;text-align:center}
+.feedback-story-footer>span{color:#755649}

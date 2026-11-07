@@ -51,6 +51,7 @@ const scenes=[];
 document.querySelectorAll('main>section:not(.manifesto)').forEach(section=>{
   const shell=document.createElement('div');
   shell.className='scene-shell';
+  if(section.classList.contains('hero'))shell.classList.add('hero-scene');
   section.before(shell);shell.append(section);
   shell.style.setProperty('--scene-background',getComputedStyle(section).backgroundColor==='rgba(0, 0, 0, 0)'?'var(--paper)':getComputedStyle(section).backgroundColor);
   scenes.push({section,shell});
