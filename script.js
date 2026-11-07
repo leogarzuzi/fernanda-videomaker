@@ -1,12 +1,11 @@
 document.documentElement.classList.add('js');
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-const heroVideo=document.querySelector('#hero-video');const previewToggle=document.querySelector('#preview-toggle');const previews=[...document.querySelectorAll('.film-preview')];
+const heroVideo=document.querySelector('#hero-video');const previews=[...document.querySelectorAll('.film-preview')];
 let previewsEnabled=!reducedMotion.matches,heroEnabled=!reducedMotion.matches,dialogOpen=false;
 async function safePlay(video){try{await video.play();}catch{/* A user can start playback using the visible controls. */}}
 const mediaObserver=new IntersectionObserver(entries=>{for(const entry of entries){const video=entry.target;video.dataset.visible=String(entry.isIntersecting);const enabled=video===heroVideo?heroEnabled:previewsEnabled;if(entry.isIntersecting&&enabled&&!document.hidden&&!dialogOpen)safePlay(video);else video.pause();}},{threshold:.2});[heroVideo,...previews].forEach(video=>mediaObserver.observe(video));
 function syncMedia(){[heroVideo,...previews].forEach(video=>{const enabled=video===heroVideo?heroEnabled:previewsEnabled;if(video.dataset.visible==='true'&&enabled&&!dialogOpen&&!document.hidden)safePlay(video);else video.pause();});}
-function syncPreviewButton(){previewToggle.textContent=previewsEnabled?'Pausar prévias':'Reproduzir prévias';previewToggle.setAttribute('aria-pressed',String(previewsEnabled));}previewToggle.addEventListener('click',()=>{previewsEnabled=!previewsEnabled;syncPreviewButton();syncMedia();});syncPreviewButton();
-document.addEventListener('visibilitychange',()=>{syncMedia();if(document.hidden)player.pause();});reducedMotion.addEventListener('change',()=>{heroEnabled=!reducedMotion.matches;previewsEnabled=!reducedMotion.matches;syncPreviewButton();syncMedia();});
+document.addEventListener('visibilitychange',()=>{syncMedia();if(document.hidden)player.pause();});reducedMotion.addEventListener('change',()=>{heroEnabled=!reducedMotion.matches;previewsEnabled=!reducedMotion.matches;syncMedia();});
 const menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('#mobile-menu');function closeMenu(){mobileMenu.hidden=true;menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Abrir menu');}menuToggle.addEventListener('click',()=>{const open=menuToggle.getAttribute('aria-expanded')!=='true';mobileMenu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!mobileMenu.hidden){closeMenu();menuToggle.focus();}});
 const dialog=document.querySelector('#film-dialog'),player=document.querySelector('#film-player'),playbackMessage=document.querySelector('#playback-message');const films={'1':{title:'Os três anos da Liz.',file:'filme-01'},'2':{title:'Beleza em movimento.',file:'filme-02'},'3':{title:'Um dia de fé.',file:'filme-03'},'4':{title:'Memória viva.',file:'filme-04'}};let previousFocus;
 document.querySelectorAll('[data-film]').forEach(button=>button.addEventListener('click',async()=>{const film=films[button.dataset.film];previousFocus=button;document.querySelector('#film-title').textContent=film.title;player.src=`assets/${film.file}.mp4`;player.poster=`assets/${film.file}-poster.jpg`;player.setAttribute('aria-label',film.title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();dialog.showModal();try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}}));player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
@@ -92,62 +91,42 @@ document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('c
   window.scrollTo({top,behavior:reducedMotion.matches?'instant':'smooth'});
 }));
 
-// Client messages: native touch scrolling, optional mouse drag, no autoplay.
+// Two equal groups make a continuous left-to-right ribbon of original messages.
 const feedbackRail=document.querySelector('#feedback-rail');
-const feedbackPrev=document.querySelector('#feedback-prev');
-const feedbackNext=document.querySelector('#feedback-next');
-function updateFeedbackControls(){
-  const end=Math.max(0,feedbackRail.scrollWidth-feedbackRail.clientWidth);
-  feedbackPrev.disabled=feedbackRail.scrollLeft<=2;
-  feedbackNext.disabled=feedbackRail.scrollLeft>=end-2;
+const feedbackTrack=feedbackRail.querySelector('.feedback-track');
+const feedbackGroup=feedbackRail.querySelector('.feedback-group');
+const feedbackClone=feedbackGroup.cloneNode(true);
+feedbackClone.setAttribute('aria-hidden','true');
+feedbackClone.querySelectorAll('button').forEach(button=>button.tabIndex=-1);
+feedbackTrack.prepend(feedbackClone);
+const feedbackMotion=document.querySelector('#feedback-motion');
+let feedbackPaused=false;
+function syncFeedbackMotion(){
+  feedbackRail.classList.toggle('is-paused',feedbackPaused);
+  feedbackMotion.setAttribute('aria-pressed',String(feedbackPaused));
+  feedbackMotion.setAttribute('aria-label',feedbackPaused?'Reproduzir carrossel':'Pausar carrossel');
+  feedbackMotion.hidden=reducedMotion.matches;
 }
-function moveFeedback(direction){
-  const card=feedbackRail.querySelector('.feedback-card');
-  const gap=parseFloat(getComputedStyle(feedbackRail).columnGap)||24;
-  feedbackRail.scrollBy({left:direction*(card.offsetWidth+gap),behavior:reducedMotion.matches?'instant':'smooth'});
-}
-feedbackPrev.addEventListener('click',()=>moveFeedback(-1));
-feedbackNext.addEventListener('click',()=>moveFeedback(1));
-feedbackRail.addEventListener('scroll',updateFeedbackControls,{passive:true});
-feedbackRail.addEventListener('keydown',event=>{
-  if(event.target!==feedbackRail)return;
-  if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
-    event.preventDefault();moveFeedback(event.key==='ArrowLeft'?-1:1);
-  }
-});
-let feedbackDrag=null;
-feedbackRail.addEventListener('pointerdown',event=>{
-  if(event.pointerType!=='mouse'||event.button!==0||event.target.closest('button,a'))return;
-  feedbackDrag={x:event.clientX,left:feedbackRail.scrollLeft,id:event.pointerId};
-  feedbackRail.setPointerCapture(event.pointerId);
-});
-feedbackRail.addEventListener('pointermove',event=>{
-  if(!feedbackDrag)return;
-  const distance=event.clientX-feedbackDrag.x;
-  if(Math.abs(distance)>5){
-    feedbackRail.classList.add('dragging');
-    feedbackRail.scrollLeft=feedbackDrag.left-distance;
-    event.preventDefault();
-  }
-});
-function endFeedbackDrag(){feedbackDrag=null;feedbackRail.classList.remove('dragging');updateFeedbackControls();}
-feedbackRail.addEventListener('pointerup',endFeedbackDrag);
-feedbackRail.addEventListener('pointercancel',endFeedbackDrag);
-feedbackRail.addEventListener('lostpointercapture',endFeedbackDrag);
-new ResizeObserver(updateFeedbackControls).observe(feedbackRail);
-document.fonts.ready.then(updateFeedbackControls);
-updateFeedbackControls();
+feedbackMotion.addEventListener('click',()=>{feedbackPaused=!feedbackPaused;syncFeedbackMotion();});
+new IntersectionObserver(entries=>{
+  feedbackRail.classList.toggle('is-offscreen',!entries[0].isIntersecting);
+}).observe(feedbackRail);
+reducedMotion.addEventListener('change',syncFeedbackMotion);
+syncFeedbackMotion();
 
 const feedbackDialog=document.querySelector('#feedback-dialog');
 const feedbackOriginal=document.querySelector('#feedback-original');
 let feedbackTrigger;
-document.querySelectorAll('[data-message]').forEach(button=>button.addEventListener('click',()=>{
+feedbackRail.addEventListener('click',event=>{
+  const button=event.target.closest('[data-message]');
+  if(!button)return;
+  feedbackRail.classList.add('is-reading');
   feedbackTrigger=button;
   feedbackOriginal.src=button.dataset.message;
   dialogOpen=true;syncMedia();feedbackDialog.showModal();
-}));
+});
 feedbackDialog.querySelector('.message-close').addEventListener('click',()=>feedbackDialog.close());
-feedbackDialog.addEventListener('close',()=>{dialogOpen=false;syncMedia();feedbackTrigger?.focus({preventScroll:true});});
+feedbackDialog.addEventListener('close',()=>{feedbackRail.classList.remove('is-reading');dialogOpen=false;syncMedia();feedbackTrigger?.focus({preventScroll:true});});
 feedbackDialog.addEventListener('click',event=>{
   if(event.target!==feedbackDialog)return;
   const box=feedbackDialog.getBoundingClientRect();
@@ -191,3 +170,38 @@ desktopFilmStories.addEventListener('change',()=>{sizeScenes();queueFilmStories(
 reducedMotion.addEventListener('change',queueFilmStories);
 document.fonts.ready.then(queueFilmStories);
 paintFilmStories();
+
+// The portrait arrives first, followed by the copy; movement follows scroll position.
+const aboutSection=document.querySelector('#sobre');
+const aboutPortrait=aboutSection.querySelector('.portrait');
+const aboutCopy=aboutSection.querySelector('.about-copy');
+let aboutFrame=false;
+function paintAbout(){
+  aboutFrame=false;
+  if(reducedMotion.matches){
+    ['--portrait-rise','--portrait-opacity','--copy-rise','--copy-opacity'].forEach(name=>aboutSection.style.removeProperty(name));
+    return;
+  }
+  const viewport=document.documentElement.clientHeight;
+  let photoProgress,copyProgress;
+  if(desktopFilmStories.matches){
+    const box=aboutSection.getBoundingClientRect();
+    const progress=clampProgress((viewport*.2-box.top)/(box.height-viewport+viewport*.2));
+    photoProgress=clampProgress(progress/.48);
+    copyProgress=clampProgress((progress-.27)/.62);
+  }else{
+    photoProgress=clampProgress((viewport*.94-aboutPortrait.getBoundingClientRect().top)/(viewport*.65));
+    copyProgress=clampProgress((viewport*.92-aboutCopy.getBoundingClientRect().top)/(viewport*.6));
+  }
+  const ease=value=>1-Math.pow(1-value,3);
+  aboutSection.style.setProperty('--portrait-rise',`${(1-ease(photoProgress))*180}px`);
+  aboutSection.style.setProperty('--portrait-opacity',String(clampProgress(photoProgress*2)));
+  aboutSection.style.setProperty('--copy-rise',`${(1-ease(copyProgress))*110}px`);
+  aboutSection.style.setProperty('--copy-opacity',String(clampProgress(copyProgress*2)));
+}
+function queueAbout(){if(!aboutFrame){aboutFrame=true;requestAnimationFrame(paintAbout);}}
+addEventListener('scroll',queueAbout,{passive:true});
+addEventListener('resize',queueAbout);
+reducedMotion.addEventListener('change',queueAbout);
+document.fonts.ready.then(queueAbout);
+paintAbout();

@@ -50,3 +50,6 @@ No desktop, nome empilhado na área vermelha: FERNANDA em Bebas Neue e Tahara em
 
 ## Sequência de filmes no desktop
 A partir de 701px, os quatro trabalhos passam a ocupar cenas individuais com texto e vídeo em lados alternados. A descrição entra primeiro; o vídeo vertical sobe com o scroll e permanece em cena antes do próximo trabalho. Largura limitada a 340px e altura proporcional à janela. Movimento reduzido apresenta as cenas sem animação nem retenção extra. No mobile, os cards e o nome da abertura preservam sua composição anterior. No desktop, FERNANDA foi ampliado e Tahara começa próximo ao meio do nome, avançando sobre o vídeo.
+
+## Sobre e polaroides
+Rodapé dos filmes e controle de pausa das prévias removidos. Por trás do olhar ganhou título principal e entrada vinculada ao scroll, primeiro da foto e depois do texto; logo centralizada na coluna. Abaixo de 701px, o nome usa Bebas Neue e Mrs Saint Delafield preservando as regras de posicionamento. Feedbacks destacam o print integral antes da frase, em polaroides com movimento contínuo da esquerda para a direita. O movimento pausa no hover, foco, abertura da mensagem, fora da tela e pelo controle de pausa; movimento reduzido mantém a faixa estática com rolagem manual.
