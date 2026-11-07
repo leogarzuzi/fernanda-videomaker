@@ -11,7 +11,6 @@ const menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.quer
 const dialog=document.querySelector('#film-dialog'),player=document.querySelector('#film-player'),playbackMessage=document.querySelector('#playback-message');const films={'1':{title:'Os três anos da Liz.',file:'filme-01'},'2':{title:'Beleza em movimento.',file:'filme-02'},'3':{title:'Um dia de fé.',file:'filme-03'},'4':{title:'Memória viva.',file:'filme-04'}};let previousFocus;
 document.querySelectorAll('[data-film]').forEach(button=>button.addEventListener('click',async()=>{const film=films[button.dataset.film];previousFocus=button;document.querySelector('#film-title').textContent=film.title;player.src=`assets/${film.file}.mp4`;player.poster=`assets/${film.file}-poster.jpg`;player.setAttribute('aria-label',film.title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();dialog.showModal();try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}}));player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
 dialog.querySelector('.close-player').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>{player.pause();player.removeAttribute('src');player.load();dialogOpen=false;syncMedia();previousFocus?.focus();});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
-const quotes=['“Ficou incrível.<br>A luz ficou perfeita.”','“Eu amei muito.<br>Foi o melhor até hoje.”','“Eu amei e<br>todo mundo amou!!”'];let quoteIndex=0;function changeQuote(direction){quoteIndex=(quoteIndex+direction+quotes.length)%quotes.length;document.querySelector('#quote-text').innerHTML=quotes[quoteIndex];}document.querySelector('#quote-prev').addEventListener('click',()=>changeQuote(-1));document.querySelector('#quote-next').addEventListener('click',()=>changeQuote(1));
 const revealObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}});},{threshold:.07});document.querySelectorAll('[data-reveal]').forEach(el=>revealObserver.observe(el));
 const hero=document.querySelector('.hero'),manifesto=document.querySelector('.manifesto'),words=[...document.querySelectorAll('.manifesto-text span,.manifesto-text em')];let ticking=false;
 function updateScroll(){ticking=false;const total=document.documentElement.scrollHeight-innerHeight;document.documentElement.style.setProperty('--read',String(total>0?scrollY/total:0));if(reducedMotion.matches)return;const heroRect=hero.getBoundingClientRect();if(heroRect.bottom>0){const progress=Math.min(1,Math.max(0,-heroRect.top/heroRect.height));hero.style.setProperty('--hero-scale',String(1.02+progress*.12));hero.style.setProperty('--hero-shift',`${progress*55}px`);hero.style.setProperty('--name-shift',`${progress*90}px`);}const r=manifesto.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight){const progress=Math.min(1,Math.max(0,(innerHeight*.75-r.top)/(r.height*.7)));words.forEach((word,i)=>word.style.setProperty('--word-opacity',String(Math.min(1,Math.max(.2,(progress-i*.14)*3.7)))));}}
@@ -92,3 +91,65 @@ document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('c
   const top=shell.getBoundingClientRect().top+scrollY;
   window.scrollTo({top,behavior:reducedMotion.matches?'instant':'smooth'});
 }));
+
+// Client messages: native touch scrolling, optional mouse drag, no autoplay.
+const feedbackRail=document.querySelector('#feedback-rail');
+const feedbackPrev=document.querySelector('#feedback-prev');
+const feedbackNext=document.querySelector('#feedback-next');
+function updateFeedbackControls(){
+  const end=Math.max(0,feedbackRail.scrollWidth-feedbackRail.clientWidth);
+  feedbackPrev.disabled=feedbackRail.scrollLeft<=2;
+  feedbackNext.disabled=feedbackRail.scrollLeft>=end-2;
+}
+function moveFeedback(direction){
+  const card=feedbackRail.querySelector('.feedback-card');
+  const gap=parseFloat(getComputedStyle(feedbackRail).columnGap)||24;
+  feedbackRail.scrollBy({left:direction*(card.offsetWidth+gap),behavior:reducedMotion.matches?'instant':'smooth'});
+}
+feedbackPrev.addEventListener('click',()=>moveFeedback(-1));
+feedbackNext.addEventListener('click',()=>moveFeedback(1));
+feedbackRail.addEventListener('scroll',updateFeedbackControls,{passive:true});
+feedbackRail.addEventListener('keydown',event=>{
+  if(event.target!==feedbackRail)return;
+  if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+    event.preventDefault();moveFeedback(event.key==='ArrowLeft'?-1:1);
+  }
+});
+let feedbackDrag=null;
+feedbackRail.addEventListener('pointerdown',event=>{
+  if(event.pointerType!=='mouse'||event.button!==0||event.target.closest('button,a'))return;
+  feedbackDrag={x:event.clientX,left:feedbackRail.scrollLeft,id:event.pointerId};
+  feedbackRail.setPointerCapture(event.pointerId);
+});
+feedbackRail.addEventListener('pointermove',event=>{
+  if(!feedbackDrag)return;
+  const distance=event.clientX-feedbackDrag.x;
+  if(Math.abs(distance)>5){
+    feedbackRail.classList.add('dragging');
+    feedbackRail.scrollLeft=feedbackDrag.left-distance;
+    event.preventDefault();
+  }
+});
+function endFeedbackDrag(){feedbackDrag=null;feedbackRail.classList.remove('dragging');updateFeedbackControls();}
+feedbackRail.addEventListener('pointerup',endFeedbackDrag);
+feedbackRail.addEventListener('pointercancel',endFeedbackDrag);
+feedbackRail.addEventListener('lostpointercapture',endFeedbackDrag);
+new ResizeObserver(updateFeedbackControls).observe(feedbackRail);
+document.fonts.ready.then(updateFeedbackControls);
+updateFeedbackControls();
+
+const feedbackDialog=document.querySelector('#feedback-dialog');
+const feedbackOriginal=document.querySelector('#feedback-original');
+let feedbackTrigger;
+document.querySelectorAll('[data-message]').forEach(button=>button.addEventListener('click',()=>{
+  feedbackTrigger=button;
+  feedbackOriginal.src=button.dataset.message;
+  dialogOpen=true;syncMedia();feedbackDialog.showModal();
+}));
+feedbackDialog.querySelector('.message-close').addEventListener('click',()=>feedbackDialog.close());
+feedbackDialog.addEventListener('close',()=>{dialogOpen=false;syncMedia();feedbackTrigger?.focus({preventScroll:true});});
+feedbackDialog.addEventListener('click',event=>{
+  if(event.target!==feedbackDialog)return;
+  const box=feedbackDialog.getBoundingClientRect();
+  if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)feedbackDialog.close();
+});

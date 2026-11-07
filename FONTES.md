@@ -9,6 +9,14 @@ Licença oficial: https://github.com/google/fonts/blob/main/ofl/bodonimoda/OFL.t
 
 Manrope continua nos textos e controles, Barlow Condensed nos títulos condensados e Mrs Saint Delafield na assinatura tipográfica.
 
+## Nome da abertura no desktop
+
+FERNANDA usa Bebas Neue, hospedada em `assets/fonts/bebas-neue-latin.woff2` com sua licença OFL em `assets/fonts/OFL-Bebas-Neue.txt`. Tahara usa Mrs Saint Delafield, como uma assinatura tipográfica. Nome e sobrenome ficam empilhados no campo vermelho.
+
+Essas mudanças de posição e fonte do nome se aplicam somente ao desktop (a partir de 701px). O nome da abertura mobile mantém a composição e as fontes anteriores, conforme solicitado.
+
+Fonte oficial: https://fonts.google.com/specimen/Bebas+Neue
+
 ## Harmony — referência, não incorporada
 
 Fonte solicitada: Harmony, de Artem Nevsky.

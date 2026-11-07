@@ -44,3 +44,6 @@ Harmony: aguarda arquivo com licença web, conforme FONTES.md. Nenhuma fonte de 
 
 ## Vermelho e tipografia publicados
 Vermelho principal #FE0B00, extraído da variável --e-global-color-primary da referência https://pontofuba.com/en/. A faixa e o manifesto compartilham esse mesmo valor. Os fundos claros foram preservados; as sombras vermelhas passaram para tons mais quentes. Fonte editorial Bodoni Moda, hospedada localmente com licença OFL, como alternativa à Harmony. Detalhes em FONTES.md. A fonte manuscrita da assinatura foi preservada.
+
+## Nome e feedbacks
+No desktop, nome empilhado na área vermelha: FERNANDA em Bebas Neue e Tahara em assinatura tipográfica. A composição do nome no mobile permanece intacta. A antiga seção de serviços Cada história, um caminho foi substituída por um carrossel de seis feedbacks reais, com controles, toque e arraste por mouse, sem autoplay. Cada cartão abre o print original em um diálogo. A seção antiga de depoimentos foi removida para evitar duplicação. Os arquivos originais estão em assets/feedbacks/.
