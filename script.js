@@ -153,3 +153,41 @@ feedbackDialog.addEventListener('click',event=>{
   const box=feedbackDialog.getBoundingClientRect();
   if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)feedbackDialog.close();
 });
+
+// Desktop film sequence: copy arrives first; each portrait rises afterward.
+// Native page scrolling is preserved; mobile uses its original card layout.
+const desktopFilmStories=matchMedia('(min-width:701px)');
+const filmStories=[...document.querySelectorAll('.film-card')];
+const clampProgress=value=>Math.max(0,Math.min(1,value));
+let filmStoryFrame=false;
+function paintFilmStories(){
+  filmStoryFrame=false;
+  const animated=desktopFilmStories.matches&&!reducedMotion.matches;
+  const viewport=document.documentElement.clientHeight;
+  filmStories.forEach(card=>{
+    const media=card.querySelector('.film-open');
+    if(!animated){
+      ['--film-rise','--film-opacity','--story-opacity','--story-shift'].forEach(property=>card.style.removeProperty(property));
+      media.inert=false;
+      return;
+    }
+    const box=card.getBoundingClientRect();
+    const travel=Math.max(1,box.height-viewport);
+    const progress=clampProgress(-box.top/travel);
+    const videoProgress=clampProgress((progress-.12)/.68);
+    const eased=1-Math.pow(1-videoProgress,3);
+    const copyProgress=clampProgress((viewport*.85-box.top)/(viewport*.6));
+    card.style.setProperty('--film-rise',`${(1-eased)*viewport*.92}px`);
+    card.style.setProperty('--film-opacity',String(clampProgress(videoProgress*1.8)));
+    card.style.setProperty('--story-opacity',String(copyProgress));
+    card.style.setProperty('--story-shift',`${(1-copyProgress)*30}px`);
+    media.inert=videoProgress<.04;
+  });
+}
+function queueFilmStories(){if(!filmStoryFrame){filmStoryFrame=true;requestAnimationFrame(paintFilmStories);}}
+addEventListener('scroll',queueFilmStories,{passive:true});
+addEventListener('resize',queueFilmStories);
+desktopFilmStories.addEventListener('change',()=>{sizeScenes();queueFilmStories();});
+reducedMotion.addEventListener('change',queueFilmStories);
+document.fonts.ready.then(queueFilmStories);
+paintFilmStories();

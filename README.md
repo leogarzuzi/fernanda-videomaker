@@ -47,3 +47,6 @@ Vermelho principal #FE0B00, extraído da variável --e-global-color-primary da r
 
 ## Nome e feedbacks
 No desktop, nome empilhado na área vermelha: FERNANDA em Bebas Neue e Tahara em assinatura tipográfica. A composição do nome no mobile permanece intacta. A antiga seção de serviços Cada história, um caminho foi substituída por um carrossel de seis feedbacks reais, com controles, toque e arraste por mouse, sem autoplay. Cada cartão abre o print original em um diálogo. A seção antiga de depoimentos foi removida para evitar duplicação. Os arquivos originais estão em assets/feedbacks/.
+
+## Sequência de filmes no desktop
+A partir de 701px, os quatro trabalhos passam a ocupar cenas individuais com texto e vídeo em lados alternados. A descrição entra primeiro; o vídeo vertical sobe com o scroll e permanece em cena antes do próximo trabalho. Largura limitada a 340px e altura proporcional à janela. Movimento reduzido apresenta as cenas sem animação nem retenção extra. No mobile, os cards e o nome da abertura preservam sua composição anterior. No desktop, FERNANDA foi ampliado e Tahara começa próximo ao meio do nome, avançando sobre o vídeo.
