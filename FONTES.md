@@ -1,4 +1,15 @@
-# Harmony — aplicação pendente de arquivo com licença web
+# Tipografia do portfólio
+
+## Fonte aplicada: Bodoni Moda
+
+Alternativa de alto contraste à referência Harmony enviada, aplicada aos títulos editoriais. Os arquivos WOFF2 normal e itálico estão hospedados em `assets/fonts/`, acompanhados da licença SIL Open Font License em `assets/fonts/OFL-Bodoni-Moda.txt`.
+
+Fonte oficial: https://fonts.google.com/specimen/Bodoni+Moda
+Licença oficial: https://github.com/google/fonts/blob/main/ofl/bodonimoda/OFL.txt
+
+Manrope continua nos textos e controles, Barlow Condensed nos títulos condensados e Mrs Saint Delafield na assinatura tipográfica.
+
+## Harmony — referência, não incorporada
 
 Fonte solicitada: Harmony, de Artem Nevsky.
 
@@ -8,6 +19,6 @@ O autor informa no DaFont que o download gratuito é apenas para uso pessoal e a
 https://www.dafont.com/harmony-4.font
 https://pixelsurplus.com/products/harmony-modern-serif-font
 
-No fornecedor há uma opção específica de licença Web Font. Não foi feita compra e não foi incorporado o arquivo gratuito de uso pessoal ao portfólio comercial. A tipografia atual continua ativa.
+No fornecedor há uma opção específica de licença Web Font. Não foi feita compra e não foi incorporado o arquivo gratuito de uso pessoal ao portfólio comercial. Bodoni Moda foi aplicada como alternativa com licença aberta.
 
 Quando houver um arquivo autorizado para uso web (de preferência WOFF2), ele poderá ser incorporado localmente com @font-face e aplicado aos títulos editoriais. A assinatura tipográfica Tahara é um recurso separado e deve ser preservada.
