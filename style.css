@@ -199,3 +199,14 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
 @media(max-width:700px){.manifesto-text{font-size:clamp(34px,9.2vw,60px);line-height:1.18}.film-meta h3{font-size:30px}.about-copy h2{font-size:clamp(37px,10vw,58px)}.hero h1 em{font-size:21vw;line-height:1.05}}
 @media(min-width:701px){.hero h1 em{font-size:clamp(65px,min(10.5vw,22svh),180px)}}
 @media(max-width:700px){.manifesto-text>span:last-child{font-size:.88em}}
+
+/* Center the player identity independently of its close control. */
+.player-heading{position:relative;display:block;text-align:center;padding-top:0;margin-bottom:22px}
+.player-heading>div{width:100%;display:flex;flex-direction:column;align-items:center}
+.player-heading .player-fan{width:52px;height:44px;transform:none;stroke-width:1.35;margin:0 auto}
+.player-heading h2{width:100%;text-align:center;margin:12px 0 0;font-size:28px;line-height:1.2;overflow-wrap:break-word}
+.player-heading .close-player{position:absolute;right:0;top:0;min-height:44px;justify-content:center}
+.back-to-top{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:-12px 0 -8px;color:inherit}
+.back-to-top svg{width:22px;height:22px;display:block;transition:transform .2s ease}
+.back-to-top:hover svg{transform:translateY(-3px)}
+@media(max-width:700px){.player-heading .player-fan{width:46px;height:40px}.player-heading h2{font-size:23px;margin-top:14px}.player-heading .close-player{gap:8px;font-size:9px}.back-to-top svg{width:23px;height:23px}}
