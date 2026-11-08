@@ -112,3 +112,11 @@ WhatsApp permanece fixo até se aproximar do rodapé e então sobe exatamente o 
 Hero: adicionado autoplay, muted, playsinline e webkit-playsinline; estado muted definido também em JavaScript. Retentativas em canplay, loadeddata, pageshow e gestos reais de toque/ponteiro/teclado. Requisições play concorrentes evitadas; mantém pausa fora da tela, em diálogos e com movimento reduzido. Variante mobile assets/hero-film-mobile-v1.mp4 gerada do vídeo enhanced fornecido pelo usuário, sem áudio, H.264 Baseline, 720x1280, 24fps e faststart, com duração integral e aproximadamente 72% menos bytes. Desktop mantém o arquivo enhanced original.
 
 Validação: sintaxe/build, simulações de scroll reversível, ordem texto/vídeo, ausência de retenção, limite do rodapé em três alturas, autoplay rejeitado e retomado por gesto, movimento reduzido, regressões de menu/diálogos/carrossel, metadados/faststart e decodificação do vídeo. Não houve teste em iPhone físico. Referências técnicas: https://webkit.org/blog/6784/new-video-policies-for-ios/ e https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source . Publicação solicitada pelo usuário.
+
+
+## Capa de compartilhamento
+Capa original de 1200 × 630 em assets/compartilhamento-fernanda-v1.png, com fonte Bebas Neue e assinatura Mrs Saint Delafield já usadas no site, leque vetorial da marca e ilustração original do menu em nanquim branco. Composição editável autocontida em assets/compartilhamento-fernanda-v1.svg; textos convertidos em paths para garantir fidelidade. Renderizado com resvg a partir da composição vetorial, sem nova geração de imagem nem alterações no arquivo original do retrato. Ferramentas de render somente na pasta work ignorada, sem nova dependência do site ou do build.
+
+Open Graph e Twitter Card configurados estaticamente no HTML com URL HTTPS absoluta, título, descrição, idioma, imagem, dimensões e texto alternativo. Canonical aponta para o domínio atual no Vercel. Arquivos gerados e configuração preparados localmente; a prévia de compartilhamento externa só poderá buscar a nova capa após publicação. O cache do aplicativo de destino pode demorar a atualizar. Referência técnica: https://ogp.me/ .
+
+Capa v1 com a ilustração do menu aprovada para publicação pelo usuário. As versões adicionais com fotos reais serão apenas alternativas locais até escolha posterior.
