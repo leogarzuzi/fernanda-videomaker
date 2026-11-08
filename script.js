@@ -389,7 +389,7 @@ function paintFilmStories(){
     }
     const box=card.getBoundingClientRect();
     const copyProgress=clampProgress((viewport*.96-box.top)/(viewport*.4));
-    const videoProgress=clampProgress((viewport*.64-box.top)/(viewport*.6));
+    const videoProgress=clampProgress((viewport*.56-box.top)/(viewport*.6));
     card.style.setProperty('--film-rise',`${(1-videoProgress)*Math.min(180,viewport*.2)}px`);
     card.style.setProperty('--film-opacity',String(videoProgress));
     card.style.setProperty('--story-opacity',String(copyProgress));
