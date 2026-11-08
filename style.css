@@ -769,3 +769,16 @@ body.menu-open .menu-toggle{color:#fe0b00}
 .feeling-type{font:400 .73em/1.6 "Amanojaku",cursive;letter-spacing:-.015em;text-transform:uppercase}
 .feeling-paper::before{content:'';position:absolute;z-index:-1;inset:-.19em -.16em;background:url('assets/papel-rasgado-realista-v2.png') center/100% 100% no-repeat;transform:rotate(-1.8deg);pointer-events:none}
 @media(max-width:700px){.feeling-paper::before{inset:-.17em -.14em;transform:rotate(-1.2deg)}}
+
+
+/* Continuous page flow: no inter-section sticky shells or extra hold distance. */
+.whatsapp-float{transform:translate3d(0,calc(-1 * var(--whatsapp-lift,0px)),0)}
+.signature-footer{padding-right:0}
+@media(max-width:700px){.signature-footer{padding-right:0}}
+@media(min-width:701px){
+ .film-card,.film-card.offset{height:auto;min-height:100svh}
+ .film-stage{position:relative;top:auto}
+ .js .film-card[data-reveal]{opacity:1;translate:none;transition:none}
+ .js .film-card .film-open{transition:none;transform:translate3d(0,var(--film-rise,180px),0)}
+ .js .film-story{transition:none}
+}

@@ -102,3 +102,13 @@ Versão anterior publicada antes da alteração do menu, conforme solicitado. Me
 
 ## Publicação autorizada — menu e destaque SENTIR
 Menu circular disponível no desktop e mobile, com entrada escalonada, animação das letras e ilustração de nanquim invertida para traços brancos. Rodapé do contato reposicionado. Destaque SENTIR usa a fonte Amanojaku fornecida pelo usuário, em maiúsculas e amarelo, sobre o papel rasgado realista. Incluídos apenas os novos arquivos usados pela versão atual e o original da fonte fornecida; experiências descartadas permanecem locais. Publicação solicitada pelo usuário após validação de sintaxe, build, links e assets, simulações do menu em quatro tamanhos, diálogos e carrossel.
+
+
+## Fechamento: fluxo contínuo, rodapé e hero mobile
+Retirada a criação de wrappers sticky entre seções e a distância extra de retenção. Seções seguem fluxo nativo; âncoras calculadas diretamente sobre a seção. No desktop, cartões de filmes usam cenas de uma tela sem retenção: descrição entra primeiro, vídeo começa quando o cartão chega a 64% da altura da janela e termina perto do topo, com posição e opacidade vinculadas diretamente ao scroll e reversíveis. Mobile mantém a organização dos cartões.
+
+WhatsApp permanece fixo até se aproximar do rodapé e então sobe exatamente o necessário para manter 12px de separação da divisória, sem cobrir a seta. Atualização em scroll, resize, viewport visual e alterações no tamanho do conteúdo.
+
+Hero: adicionado autoplay, muted, playsinline e webkit-playsinline; estado muted definido também em JavaScript. Retentativas em canplay, loadeddata, pageshow e gestos reais de toque/ponteiro/teclado. Requisições play concorrentes evitadas; mantém pausa fora da tela, em diálogos e com movimento reduzido. Variante mobile assets/hero-film-mobile-v1.mp4 gerada do vídeo enhanced fornecido pelo usuário, sem áudio, H.264 Baseline, 720x1280, 24fps e faststart, com duração integral e aproximadamente 72% menos bytes. Desktop mantém o arquivo enhanced original.
+
+Validação: sintaxe/build, simulações de scroll reversível, ordem texto/vídeo, ausência de retenção, limite do rodapé em três alturas, autoplay rejeitado e retomado por gesto, movimento reduzido, regressões de menu/diálogos/carrossel, metadados/faststart e decodificação do vídeo. Não houve teste em iPhone físico. Referências técnicas: https://webkit.org/blog/6784/new-video-policies-for-ios/ e https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source . Publicação solicitada pelo usuário.

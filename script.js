@@ -2,10 +2,28 @@ document.documentElement.classList.add('js');
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const heroVideo=document.querySelector('#hero-video');const previews=[...document.querySelectorAll('.film-preview')];
 let previewsEnabled=!reducedMotion.matches,heroEnabled=!reducedMotion.matches,dialogOpen=false;
-async function safePlay(video){try{await video.play();}catch{/* A user can start playback using the visible controls. */}}
+const pendingPlayback=new WeakSet();
+async function safePlay(video){
+  if(!video.paused||pendingPlayback.has(video))return;
+  pendingPlayback.add(video);
+  try{await video.play();}catch{/* Browsers may require a user gesture; the hero retries on interaction. */}
+  finally{pendingPlayback.delete(video);}
+}
+heroVideo.defaultMuted=true;heroVideo.muted=true;heroVideo.playsInline=true;heroVideo.autoplay=heroEnabled;
+if(!heroEnabled)heroVideo.pause();
+function resumeHero(){
+  if(!heroEnabled||document.hidden||dialogOpen)return;
+  const box=heroVideo.getBoundingClientRect();
+  if(box.bottom<=0||box.top>=innerHeight)return;
+  heroVideo.muted=true;safePlay(heroVideo);
+}
+heroVideo.addEventListener('loadeddata',resumeHero);
+heroVideo.addEventListener('canplay',resumeHero);
+addEventListener('pageshow',resumeHero);
+for(const event of ['touchstart','pointerdown','keydown'])document.addEventListener(event,resumeHero,{capture:true,passive:true});
 const mediaObserver=new IntersectionObserver(entries=>{for(const entry of entries){const video=entry.target;video.dataset.visible=String(entry.isIntersecting);const enabled=video===heroVideo?heroEnabled:previewsEnabled;if(entry.isIntersecting&&enabled&&!document.hidden&&!dialogOpen)safePlay(video);else video.pause();}},{threshold:.2});[heroVideo,...previews].forEach(video=>mediaObserver.observe(video));
 function syncMedia(){[heroVideo,...previews].forEach(video=>{const enabled=video===heroVideo?heroEnabled:previewsEnabled;if(video.dataset.visible==='true'&&enabled&&!dialogOpen&&!document.hidden)safePlay(video);else video.pause();});}
-document.addEventListener('visibilitychange',()=>{syncMedia();if(document.hidden)player.pause();});reducedMotion.addEventListener('change',()=>{heroEnabled=!reducedMotion.matches;previewsEnabled=!reducedMotion.matches;syncMedia();});
+document.addEventListener('visibilitychange',()=>{syncMedia();if(document.hidden)player.pause();});reducedMotion.addEventListener('change',()=>{heroEnabled=!reducedMotion.matches;heroVideo.autoplay=heroEnabled;previewsEnabled=!reducedMotion.matches;syncMedia();});
 const menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('#mobile-menu');
 const menuLinks=[...mobileMenu.querySelectorAll('.menu-link')];
 const menuEntrance=[...menuLinks,mobileMenu.querySelector('.menu-portrait'),...mobileMenu.querySelectorAll('.menu-footer>*')];
@@ -205,45 +223,11 @@ function bindContactCopy(button,text,label){
 bindContactCopy(emailButton,emailButton.dataset.email,'E-mail');
 bindContactCopy(phoneButton,phoneButton.dataset.phone,'Telefone');
 
-// Keep sections centered briefly using native sticky positioning, without
-// intercepting wheel/touch input. Tall sections remain readable to their end.
-const scenes=[];
-document.querySelectorAll('main>section:not(.about-collage)').forEach(section=>{
-  const shell=document.createElement('div');
-  shell.className='scene-shell';
-  if(section.classList.contains('hero'))shell.classList.add('hero-scene');
-  section.before(shell);shell.append(section);
-  shell.style.setProperty('--scene-background',getComputedStyle(section).backgroundColor==='rgba(0, 0, 0, 0)'?'var(--paper)':getComputedStyle(section).backgroundColor);
-  scenes.push({section,shell});
-});
-let sceneFrame;
-function sizeScenes(){
-  cancelAnimationFrame(sceneFrame);
-  sceneFrame=requestAnimationFrame(()=>{
-    const viewport=document.documentElement.clientHeight;
-    const hold=Math.round(viewport*(innerWidth<=700?.18:.28));
-    scenes.forEach(({section,shell})=>{
-      const height=section.getBoundingClientRect().height;
-      shell.style.setProperty('--scene-height',`${Math.max(viewport,height)}px`);
-      shell.style.setProperty('--scene-hold',reducedMotion.matches?'0px':`${hold}px`);
-      // Short sections pin at the center; long sections pin after the last
-      // portion of their content has entered the viewport.
-      shell.style.setProperty('--scene-top',`${height<=viewport?(viewport-height)/2:viewport-height}px`);
-    });
-    updateScroll();
-  });
-}
-const sceneResizeObserver=new ResizeObserver(sizeScenes);
-scenes.forEach(({section})=>sceneResizeObserver.observe(section));
-addEventListener('resize',sizeScenes);
-reducedMotion.addEventListener('change',sizeScenes);
-document.fonts.ready.then(sizeScenes);
-sizeScenes();
+// Sections stay in normal document flow; only their content follows scroll.
 function navigateToSection(hash){
   const target=document.getElementById(hash.slice(1));if(!target)return;
-  const shell=target.closest('.scene-shell');
   history.pushState(null,'',hash);
-  const top=(shell||target).getBoundingClientRect().top+scrollY;
+  const top=target.getBoundingClientRect().top+scrollY;
   const heading=target.querySelector('h1,h2');
   const focusTarget=heading&&!heading.classList.contains('sr-only')?heading:target;
   focusTarget.setAttribute('tabindex','-1');focusTarget.focus({preventScroll:true});
@@ -404,13 +388,10 @@ function paintFilmStories(){
       return;
     }
     const box=card.getBoundingClientRect();
-    const travel=Math.max(1,box.height-viewport);
-    const progress=clampProgress(-box.top/travel);
-    const videoProgress=clampProgress((progress-.10)/.82);
-    const eased=videoProgress*videoProgress*(3-2*videoProgress);
-    const copyProgress=clampProgress((viewport*.85-box.top)/(viewport*.6));
-    card.style.setProperty('--film-rise',`${(1-eased)*viewport*.92}px`);
-    card.style.setProperty('--film-opacity',String(clampProgress(videoProgress*1.6)));
+    const copyProgress=clampProgress((viewport*.96-box.top)/(viewport*.4));
+    const videoProgress=clampProgress((viewport*.64-box.top)/(viewport*.6));
+    card.style.setProperty('--film-rise',`${(1-videoProgress)*Math.min(180,viewport*.2)}px`);
+    card.style.setProperty('--film-opacity',String(videoProgress));
     card.style.setProperty('--story-opacity',String(copyProgress));
     card.style.setProperty('--story-shift',`${(1-copyProgress)*30}px`);
     media.inert=videoProgress<.04;
@@ -419,7 +400,7 @@ function paintFilmStories(){
 function queueFilmStories(){if(!filmStoryFrame){filmStoryFrame=true;requestAnimationFrame(paintFilmStories);}}
 addEventListener('scroll',queueFilmStories,{passive:true});
 addEventListener('resize',queueFilmStories);
-desktopFilmStories.addEventListener('change',()=>{sizeScenes();queueFilmStories();});
+desktopFilmStories.addEventListener('change',queueFilmStories);
 reducedMotion.addEventListener('change',queueFilmStories);
 document.fonts.ready.then(queueFilmStories);
 paintFilmStories();
@@ -483,3 +464,22 @@ addEventListener('resize',queueCaptionAlignment);
 document.fonts.ready.then(queueCaptionAlignment);
 document.fonts.addEventListener('loadingdone',queueCaptionAlignment);
 queueCaptionAlignment();
+
+
+// The fixed contact button stops above the footer instead of covering its controls.
+const floatingContact=document.querySelector('.whatsapp-float');
+const contactFooter=document.querySelector('.signature-footer');
+let floatingContactFrame=0;
+function paintFloatingContact(){
+  floatingContactFrame=0;
+  const bottom=parseFloat(getComputedStyle(floatingContact).bottom)||16;
+  const lift=Math.max(0,innerHeight-bottom-contactFooter.getBoundingClientRect().top+12);
+  floatingContact.style.setProperty('--whatsapp-lift',`${lift}px`);
+}
+function queueFloatingContact(){if(!floatingContactFrame)floatingContactFrame=requestAnimationFrame(paintFloatingContact);}
+addEventListener('scroll',queueFloatingContact,{passive:true});
+addEventListener('resize',queueFloatingContact);
+window.visualViewport?.addEventListener('resize',queueFloatingContact);
+new ResizeObserver(queueFloatingContact).observe(document.querySelector('main'));
+document.fonts.ready.then(queueFloatingContact);
+paintFloatingContact();
