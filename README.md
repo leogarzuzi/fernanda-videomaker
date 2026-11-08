@@ -95,3 +95,10 @@ Serviços reformulados em três filmes com loops silenciosos leves (seis segundo
 
 ## Remoções e referência em caixa alta
 Vídeos decorativos do manifesto removidos. Seção Qual história vem agora removida por inteiro, com links de menu retirados e CTA do benefício mobile redirecionado ao contato. Composição do Sobre usa HELLO / MEET / FERNANDA na mesma fonte Anton, em caixa alta, preservando o recorte, as pétalas, o nanquim e a legenda preta. Mobile adaptado para manter as palavras dentro da tela. Sem deploy.
+
+## Menu em tela cheia (local, após publicação 8aaa5aa)
+Versão anterior publicada antes da alteração do menu, conforme solicitado. Menu disponível no desktop e mobile: revelação circular a partir do botão, com pulsação inicial e duração de 1,4 segundo; opções entram após 0,8 segundo em sequência de 0,1 segundo. Letras rolam individualmente no hover e foco, com duração de 1 segundo e escalonamento de 0,05 segundo. Ritmo conferido na implementação pública de https://www.worksruthi.com/. Código adaptado em JavaScript nativo, sem dependências. Ilustração fornecida pelo usuário em assets/fernanda-menu-nanquim.png, exibida no desktop e paisagem; oculta no celular em retrato. Fechamento circular, Escape, foco contido, navegação após a saída e movimento reduzido. Novas alterações somente locais; sem segundo deploy. Validação por simulação de estado em quatro tamanhos, sintaxe, build e HTTP; sem inspeção visual em navegador nesta atualização.
+
+
+## Publicação autorizada — menu e destaque SENTIR
+Menu circular disponível no desktop e mobile, com entrada escalonada, animação das letras e ilustração de nanquim invertida para traços brancos. Rodapé do contato reposicionado. Destaque SENTIR usa a fonte Amanojaku fornecida pelo usuário, em maiúsculas e amarelo, sobre o papel rasgado realista. Incluídos apenas os novos arquivos usados pela versão atual e o original da fonte fornecida; experiências descartadas permanecem locais. Publicação solicitada pelo usuário após validação de sintaxe, build, links e assets, simulações do menu em quatro tamanhos, diálogos e carrossel.
