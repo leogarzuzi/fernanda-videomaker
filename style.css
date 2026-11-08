@@ -1,3 +1,4 @@
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/anton-latin.woff2") format("woff2")}
 @font-face{font-family:"Mrs Saint Delafield";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/mrs-saint-delafield-latin.woff2") format("woff2")}
 @font-face{font-family:"Bebas Neue";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/bebas-neue-latin.woff2") format("woff2")}
 @font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:400 500;font-display:swap;src:url("assets/fonts/bodoni-moda-normal-latin.woff2") format("woff2")}
@@ -275,7 +276,7 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
   .hero h1>span{font-size:clamp(80px,12.5vw,230px)}
   .hero h1 em{font-size:clamp(100px,15.4vw,265px);margin:-.08em 0 0 40%;white-space:nowrap}
   .film-grid{display:block;padding:0}
-  .film-card,.film-card.offset{width:100%;height:175svh;margin:0;transform:none;position:relative}
+  .film-card,.film-card.offset{width:100%;height:230svh;margin:0;transform:none;position:relative}
   .js .film-card[data-reveal]{opacity:1;translate:none;transition:none}
   .film-stage{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:8%;align-items:center;padding:5svh 3%;overflow:hidden}
   .film-card .film-open{width:min(24vw,40.5svh,340px);justify-self:center;grid-column:1;grid-row:1}
@@ -333,19 +334,16 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
 
 /* Original screenshots take the foreground, like a moving strip of Polaroids. */
 .feedback-rail{display:block;overflow:hidden;cursor:default;scroll-snap-type:none;padding:25px 8px 35px;margin-right:0;touch-action:pan-y}
-.feedback-track{display:flex;width:max-content;animation:polaroid-ribbon 90s linear infinite;will-change:transform}
+.feedback-track{display:flex;width:max-content;animation:none;will-change:transform}
 .feedback-group{display:flex;gap:28px;padding-right:28px;align-items:stretch;flex-shrink:0}
 .feedback-card{flex:0 0 auto;width:clamp(260px,26vw,320px);min-height:0;padding:13px 13px 22px;justify-content:flex-start}
 .feedback-card .message-source{display:block;width:100%;padding:0;margin:0;background:#e9e1d5;border:0;border-radius:0;min-height:0}
 .feedback-card .message-source img{display:block;width:100%;height:auto;aspect-ratio:3/4.35;object-fit:contain;max-width:none;max-height:none;border:0;border-radius:0}
 .feedback-card blockquote{font:400 clamp(23px,2.1vw,29px)/1.25 var(--serif);margin:22px 8px 0;letter-spacing:-.035em;text-align:center}
-.feedback-rail:focus-within .feedback-track,.feedback-rail.is-paused .feedback-track,.feedback-rail.is-offscreen .feedback-track,.feedback-rail.is-reading .feedback-track{animation-play-state:paused}
-.feedback-rail:has(:focus-visible){overflow-x:auto;touch-action:auto}
-.feedback-rail:has(:focus-visible) .feedback-track{animation:none;transform:translateX(-50%)}
 .carousel-play{display:none}
 #feedback-motion[aria-pressed="true"] .carousel-pause{display:none}
 #feedback-motion[aria-pressed="true"] .carousel-play{display:block}
-@keyframes polaroid-ribbon{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
 @media(max-width:700px){
   .feedback-rail{margin-inline:-6.82%;padding-inline:15px}
   .feedback-card{width:clamp(245px,74vw,300px);padding:12px 12px 22px}
@@ -355,7 +353,6 @@ blockquote{line-height:1.15;letter-spacing:-.03em}
 @media(prefers-reduced-motion:reduce){
   .feedback-rail{overflow-x:auto;touch-action:auto}
   .feedback-track{animation:none;transform:none;will-change:auto}
-  .feedback-rail:has(:focus-visible) .feedback-track{transform:none}
   .feedback-group[aria-hidden="true"]{display:none}
 }
 @media(min-width:701px) and (max-height:650px){.about{height:auto}.about-stage{position:relative;height:auto;min-height:100svh;padding:35px 0}.about-grid{padding-top:30px}.portrait{width:min(100%,290px)}}
@@ -398,3 +395,309 @@ html{scroll-behavior:auto}
 .scene-shell.hero-scene{height:auto;overflow-anchor:none}
 .scene-shell.hero-scene>.hero{position:relative;top:auto}
 .hero{overflow-anchor:none}
+
+/* A quiet screening room for the portfolio. */
+.selected{--line:#ffffff24;background:#171415;color:#f4eee5;padding-bottom:85px}
+.selected .section-kicker{border-color:#ffffff28}
+.selected .work-heading>p,.selected .film-meta p,.selected .film-story p{color:#c6bab2}
+.selected .film-story .eyebrow{color:#e9a295}
+.selected .film-cut{background:#252021}
+.selected .film-open:focus-visible{outline-color:#f3c0b3}
+.selected .film-story h3{color:#f4eee5}
+
+/* A light editorial interlude about working with a small camera. */
+.mobile-benefits{background:#f2eadf;color:#422d26;display:grid;grid-template-columns:1.05fr 1fr;gap:11%;padding-top:115px;padding-bottom:115px}
+.benefits-intro h2,.services-intro h2{font:400 clamp(45px,4.7vw,76px)/1.06 var(--serif);letter-spacing:-.045em;margin:27px 0}
+.benefits-intro h2 em,.services-intro h2 em{font-family:inherit;letter-spacing:inherit;line-height:inherit}
+.benefits-intro>p{max-width:370px;font-size:15px;line-height:1.9;color:#755e52;margin:0 0 20px}
+.benefits-intro .underlined{font-size:12px;min-height:44px;display:inline-flex;align-items:center}
+.benefit-list{border-top:1px solid #cdb9a7}
+.benefit-list article{padding:27px 0;border-bottom:1px solid #cdb9a7}
+.benefit-list h3{font:400 clamp(24px,2.2vw,34px)/1.2 var(--serif);letter-spacing:-.035em;margin:0 0 14px}
+.benefit-list p{font-size:14px;line-height:1.9;color:#755e52;margin:0;max-width:450px}
+
+.services-editorial{background:#42150f;color:#f5e9dc;padding-top:100px;padding-bottom:85px}
+.services-intro{display:grid;grid-template-columns:1.25fr 1fr;column-gap:12%;align-items:end;margin-bottom:55px}
+.services-intro>.eyebrow{grid-column:1/-1;color:#d6b2a5}
+.services-intro h2{margin-bottom:0}
+.services-intro>p{max-width:350px;font-size:15px;line-height:1.9;color:#d6b2a5;margin:0 0 4px}
+.service-list{border-top:1px solid #ffffff30}
+.service-list article{display:grid;grid-template-columns:1.25fr 1fr;gap:12%;padding:36px 0;border-bottom:1px solid #ffffff30}
+.service-list h3{font:400 clamp(32px,3.5vw,52px)/1.06 var(--serif);letter-spacing:-.04em;margin:0}
+.service-list p{font-size:14px;line-height:1.85;color:#e0c6b8;margin:0 0 20px;max-width:480px}
+.service-formats{display:block;font-size:9px;letter-spacing:.65px;line-height:1.8;color:#cba093}
+.services-outro{display:flex;justify-content:space-between;align-items:center;gap:30px;margin-top:45px}
+.services-outro p{font:400 24px/1.5 var(--serif);margin:0}
+.services-outro p>span{display:block;font:12px/1.8 var(--sans);color:#d6b2a5;margin-top:7px}
+.project-link{display:inline-flex;justify-content:space-between;align-items:center;gap:30px;min-height:48px;border-bottom:1px solid #bd8b79;color:inherit;text-decoration:none;font-size:13px;padding:10px 0;white-space:nowrap}
+.project-link>span{font-size:22px;transition:translate .2s}
+.project-link:hover>span{translate:3px -3px}
+
+/* Scrollbars use the same warm neutrals and red as the site. */
+html{scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#995b50 #eee6da}
+html::-webkit-scrollbar{width:9px}
+html::-webkit-scrollbar-track{background:#eee6da}
+html::-webkit-scrollbar-thumb{background:#995b50;border:2px solid #eee6da;border-radius:12px}
+html::-webkit-scrollbar-thumb:hover{background:#762c23}
+dialog{scrollbar-width:thin;scrollbar-color:#a37568 #211a1b;overscroll-behavior:contain}
+dialog::-webkit-scrollbar{width:7px}
+dialog::-webkit-scrollbar-track{background:#211a1b}
+dialog::-webkit-scrollbar-thumb{background:#a37568;border-radius:8px}
+
+/* Native dialogs retain focus management; motion covers both directions. */
+#film-dialog{background:#171415;border-color:#ffffff24;width:min(750px,94vw)}
+#film-dialog::backdrop,.message-dialog::backdrop{background:#100c0deb;backdrop-filter:blur(10px)}
+dialog.modal-arriving::backdrop{animation:modal-backdrop-in .34s ease both}
+dialog.modal-leaving::backdrop{animation:modal-backdrop-out .22s ease both}
+dialog.modal-leaving{pointer-events:none}
+@keyframes modal-backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes modal-backdrop-out{from{opacity:1}to{opacity:0}}
+#film-player{height:min(72dvh,calc(100dvh - 200px));width:auto;max-width:100%;max-height:760px;aspect-ratio:9/16;background:#090809}
+.close-player,.message-close{min-width:44px;min-height:44px}
+.message-close{background:transparent;font-size:12px;padding:8px 0 8px 10px}
+#feedback-original{max-height:min(74dvh,calc(100dvh - 150px))}
+
+.whatsapp-float{position:fixed;z-index:35;right:calc(22px + env(safe-area-inset-right,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:0;min-width:46px;min-height:46px;padding:10px;background:#3c1714ed;color:#f5e9dc;border:1px solid #cda99880;border-radius:40px;text-decoration:none;box-shadow:0 4px 20px #160a0a20;backdrop-filter:blur(10px);transition:background .2s,box-shadow .2s}
+.whatsapp-float svg{width:25px;height:25px;flex-shrink:0}
+.whatsapp-float>span{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;transition:max-width .25s ease,opacity .2s ease,padding .25s ease}
+.whatsapp-float:hover,.whatsapp-float:focus-visible{background:#78291e;box-shadow:0 6px 25px #160a0a35}
+.whatsapp-float:hover>span,.whatsapp-float:focus-visible>span{max-width:140px;opacity:1;padding:0 7px 0 8px}
+body.menu-open .whatsapp-float,body:has(dialog[open]) .whatsapp-float{visibility:hidden;pointer-events:none}
+.signature-footer{padding-bottom:38px}
+
+@media(min-width:701px){.site-header nav{gap:26px}}
+@media(max-width:1000px) and (min-width:701px){
+  .mobile-benefits{gap:7%}
+  .services-intro,.service-list article{column-gap:7%}
+  .services-outro{align-items:start;flex-direction:column;gap:20px}
+  .header-profession{font-size:9px;letter-spacing:.6px}
+  .site-header nav{gap:17px;font-size:10px}
+}
+@media(max-width:700px){
+  body.menu-open{overflow:hidden}
+  body.menu-open .site-header{position:fixed;z-index:80;background:#3c1714;padding-top:calc(21px + env(safe-area-inset-top,0px))}
+  #mobile-menu{position:fixed;inset:0;z-index:70;height:100dvh;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;gap:8px;padding:calc(116px + env(safe-area-inset-top,0px)) 7% calc(30px + env(safe-area-inset-bottom,0px));background:#3c1714}
+  #mobile-menu>a{font:400 clamp(36px,9.5vw,56px)/1.2 var(--serif);min-height:50px;padding:6px 0;text-decoration:none}
+  #mobile-menu>span{margin-top:22px;font-size:9px;line-height:1.7}
+  .menu-toggle{min-width:44px;min-height:44px}
+  .mobile-benefits{display:block;padding:65px 6%}
+  .benefits-intro h2,.services-intro h2{font-size:clamp(38px,10vw,58px);margin:22px 0}
+  .benefits-intro>p{font-size:15px;max-width:none}
+  .benefit-list{margin-top:35px}
+  .benefit-list article{padding:25px 0}
+  .benefit-list h3{font-size:27px}
+  .benefit-list p{font-size:14px;line-height:1.85}
+  .services-editorial{padding:65px 6%}
+  .services-intro{display:block;margin-bottom:35px}
+  .services-intro>p{font-size:15px;max-width:none}
+  .service-list article{display:block;padding:29px 0}
+  .service-list h3{font-size:34px;margin-bottom:20px}
+  .service-list h3 br{display:none}
+  .service-list p{font-size:14px}
+  .service-formats{font-size:9px;letter-spacing:.35px}
+  .services-outro{display:block;margin-top:30px}
+  .services-outro p{font-size:25px}
+  .services-outro p>span{font-size:13px}
+  .project-link{margin-top:20px;white-space:normal;width:100%;font-size:14px;gap:15px}
+  .whatsapp-float{right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));min-height:52px;padding:12px 16px;background:#70291f;border-color:#d8b29c99}
+  .whatsapp-float>span,.whatsapp-float:hover>span,.whatsapp-float:focus-visible>span{max-width:140px;opacity:1;padding:0 0 0 8px;font-size:12px}
+  body.viewing-opening .whatsapp-float{min-width:52px;padding:12px}
+  body.viewing-opening .whatsapp-float>span{max-width:0;opacity:0;padding:0}
+  .signature-footer{padding-bottom:85px}
+  #film-dialog{padding:16px 14px;max-height:calc(100dvh - 20px);width:calc(100vw - 20px)}
+  #film-player{width:auto;height:min(67dvh,calc(100dvh - 190px));max-height:none;max-width:100%;aspect-ratio:9/16}
+  .player-heading{margin-bottom:16px}
+  .player-heading h2{font-size:22px}
+  .message-dialog{max-height:calc(100dvh - 24px)}
+  .contact-center{min-width:0}
+}
+@media(max-width:380px){
+  .site-header{padding-inline:5%;gap:7px}
+  .brand{gap:9px}
+  .brand>span:last-child{font-size:8px;letter-spacing:1.1px}
+  .brand .fan-mark{width:35px;height:32px}
+  .header-profession{font-size:7px;letter-spacing:.15px}
+  .contact-socials{font-size:clamp(23px,7.1vw,27px)}
+  .copy-email{font-size:11px;padding-inline:10px;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  dialog.modal-arriving::backdrop,dialog.modal-leaving::backdrop{animation:none}
+  .whatsapp-float,.whatsapp-float>span,.project-link>span{transition:none}
+}
+
+/* A photographic cutout and Portuguese lettering, composed as a small poster. */
+.about.about-collage{height:auto;background:#f3efe3;color:#472f26;padding-top:55px;padding-bottom:75px}
+.about-collage .about-top{align-items:center;border-bottom:1px solid #d4c2b0;padding-bottom:22px;gap:20px}
+.about-collage .about-top h2{font:400 clamp(27px,3vw,45px)/1.15 var(--serif);letter-spacing:-.035em;margin:0}
+.about-collage .about-top>.eyebrow{color:#9b3528;font-size:9px;line-height:1.7;letter-spacing:1px}
+.about-artwork{--cutout-width:min(35vw,440px);position:relative;isolation:isolate;height:clamp(610px,76svh,820px);margin:30px 0 55px;color:#de3021}
+.about-collage .portrait{position:absolute;left:50%;bottom:0;width:var(--cutout-width);height:auto;margin:0;translate:-50% 0;z-index:2}
+.portrait-cutout{display:block;width:100%;height:auto;object-fit:contain}
+.portrait-hello,.portrait-name{position:absolute;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;line-height:.9;letter-spacing:-.025em;text-transform:uppercase;white-space:nowrap}
+.portrait-hello{left:calc(50% - var(--cutout-width)*.75);top:18%;font:600 clamp(84px,8.5vw,140px)/1 var(--sans);letter-spacing:-.075em;text-transform:none;z-index:1}
+.portrait-intro{position:absolute;left:calc(50% - var(--cutout-width)*.72);top:58%;font:400 italic clamp(26px,2.5vw,40px)/1.15 var(--serif);rotate:-5deg;z-index:3;white-space:nowrap}
+.portrait-name{right:3.5%;bottom:4%;font-size:clamp(104px,11.4vw,190px);z-index:3;-webkit-text-stroke:.3px currentColor}
+.portrait-caption{position:absolute;color:#171415;right:1%;bottom:28%;font-size:9px;letter-spacing:1.1px;line-height:1.7;z-index:3}
+.portrait-fan{position:absolute;z-index:3;pointer-events:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.about-artwork .portrait-fan{width:62px;height:53px;left:23%;bottom:12%;rotate:-21deg;stroke-width:1.3}
+.about-bio{display:grid;grid-template-columns:.8fr 1fr;gap:15%;max-width:1000px;margin:0 auto;border-top:1px solid #d4c2b0;padding-top:45px}
+.about-bio-heading>.eyebrow{font-size:9px;letter-spacing:.8px;line-height:1.8;color:#9b3528}
+.about-bio-heading h3{font:400 clamp(38px,4.1vw,60px)/1.08 var(--serif);letter-spacing:-.045em;margin:22px 0 0}
+.about-bio-heading h3 em{font-weight:400}
+.about-collage .about-copy{width:100%;min-width:0;padding:0}
+.about-collage .about-text>p{font-size:15px;line-height:1.9;color:#765c4f;margin:0 0 18px}
+.about-collage .about-text>.about-signature{font:italic 29px/1.2 var(--serif);color:#472f26;margin:28px 0 0}
+.about-endcap{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:40px}
+.about-endcap>.underlined{font-size:13px;min-height:44px;display:inline-flex;align-items:center}
+.about-collage .about-endcap .brand-lockup{width:175px;max-width:100%;margin:25px auto 0}
+@media(min-width:701px) and (max-width:1050px){
+  .about-artwork{--cutout-width:350px;height:600px}
+  .portrait-hello{left:calc(50% - var(--cutout-width)*.75);font-size:83px}
+  .portrait-intro{font-size:30px;top:62%}
+  .portrait-name{font-size:110px;bottom:1%}
+  .portrait-caption{bottom:21%;font-size:8px;letter-spacing:.5px}
+  .about-artwork .portrait-fan{left:15%}
+  .about-bio{gap:9%}
+}
+@media(max-width:700px){
+  .about.about-collage{padding:42px 6% 55px}
+  .about-collage .about-top{gap:18px;padding-bottom:20px}
+  .about-collage .about-top h2{font-size:29px;max-width:180px}
+  .about-collage .about-top>.eyebrow{font-size:7px;letter-spacing:.6px;max-width:105px;text-align:right}
+  .about-artwork{--cutout-width:min(75%,340px);height:clamp(470px,140vw,680px);margin:25px 0 70px}
+  .about-collage .portrait{width:var(--cutout-width);bottom:60px}
+  .portrait-hello{left:5%;top:15%;font-size:18.5vw;z-index:3}
+  .portrait-intro{left:auto;right:3%;top:20%;font-size:clamp(24px,7vw,35px);rotate:4deg}
+  .portrait-name{left:0;right:0;bottom:0;text-align:center;font-size:26.6vw;line-height:.9}
+  .portrait-caption{left:0;right:0;bottom:-28px;text-align:center;font-size:8px;letter-spacing:.7px}
+  .about-artwork .portrait-fan{left:1%;bottom:23%;width:43px;height:37px}
+  .about-bio{display:block;padding-top:30px}
+  .about-bio-heading h3{font-size:43px;margin:18px 0 27px}
+  .about-collage .about-text>p{font-size:15px;line-height:1.85}
+  .about-collage .about-text>.about-signature{font-size:27px;margin-top:25px}
+  .about-endcap{margin-top:28px}
+  .about-collage .about-endcap .brand-lockup{width:165px;margin-top:24px}
+}
+@media(max-width:360px){
+  .about-collage .about-top h2{font-size:26px}
+  .about-artwork{height:470px}
+  .portrait-intro{font-size:25px;top:22%}
+  .portrait-hello{top:18%}
+}
+
+/* Brief native retention between sections; the portrait collage stays continuous. */
+.scene-shell.hero-scene{height:calc(var(--scene-height) + var(--scene-hold))}
+.scene-shell.hero-scene>.hero{position:sticky;top:0}
+@media(min-width:701px) and (hover:hover) and (pointer:fine){
+  .whatsapp-float{transition:background .25s ease,border-color .25s ease,box-shadow .35s ease,translate .35s cubic-bezier(.22,.8,.2,1)}
+  .whatsapp-float svg{transition:rotate .35s cubic-bezier(.22,.8,.2,1),scale .35s ease}
+  .whatsapp-float>span{translate:-5px 0;transition:max-width .38s cubic-bezier(.22,.8,.2,1),opacity .26s ease,padding .38s ease,translate .38s ease}
+  .whatsapp-float:hover,.whatsapp-float:focus-visible{translate:0 -2px;border-color:#e1b69f;box-shadow:0 8px 26px #160a0a30}
+  .whatsapp-float:hover svg,.whatsapp-float:focus-visible svg{rotate:-6deg;scale:1.05}
+  .whatsapp-float:hover>span,.whatsapp-float:focus-visible>span{translate:0 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .scene-shell.hero-scene{height:auto}
+  .scene-shell.hero-scene>.hero{position:relative;top:auto}
+  .whatsapp-float,.whatsapp-float svg,.whatsapp-float>span{translate:none!important;rotate:none!important;scale:none!important}
+}
+@media(max-width:700px){
+  .portrait-name{translate:-2.5% 0}
+}
+
+/* Keep the descriptor centered over the name as one editorial lockup. */
+.portrait-nameplate{position:absolute;right:3.5%;bottom:4%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;width:max-content;max-width:100%;text-align:center}
+.portrait-nameplate .portrait-caption,.portrait-nameplate .portrait-name{position:static;left:auto;right:auto;bottom:auto;translate:none}
+.portrait-nameplate .portrait-caption{color:#171415;max-width:100%;text-wrap:balance}
+.portrait-petal{position:absolute;width:26px;height:29px;z-index:3;pointer-events:none;overflow:visible}
+.petal-body{fill:#e3a19c;stroke:#bc5048;stroke-width:.7;stroke-linejoin:round}
+.petal-vein{fill:none;stroke:#bd6256;stroke-width:.9;stroke-linecap:round;opacity:.65}
+.petal-1{left:calc(50% + var(--cutout-width)*.48);top:17%;rotate:-22deg}
+.petal-2{left:calc(50% - var(--cutout-width)*.45);top:38%;width:30px;height:33px;rotate:31deg}
+.petal-3{right:calc(50% - var(--cutout-width)*.6);top:59%;width:29px;height:32px;rotate:-48deg;opacity:.85}
+.petal-4{left:calc(50% - var(--cutout-width)*.27);bottom:11%;width:20px;height:22px;rotate:18deg;opacity:.85}
+.petal-5{right:calc(50% - var(--cutout-width)*.26);top:4%;width:17px;height:19px;rotate:62deg;opacity:.75}
+@media(min-width:701px) and (max-width:1050px){
+  .portrait-nameplate{bottom:1%}
+}
+@media(max-width:700px){
+  .portrait-nameplate{left:0;right:0;bottom:0;width:auto;gap:8px;translate:-2.5% 0}
+  .portrait-nameplate .portrait-caption{font-size:8px;letter-spacing:.7px}
+  .portrait-petal{width:20px;height:22px}
+  .petal-1{top:27%}
+  .petal-2{left:calc(50% - var(--cutout-width)*.47);top:44%;width:21px;height:24px}
+  .petal-3{top:60%;width:22px;height:25px}
+  .petal-4{bottom:18%;width:17px;height:19px}
+  .petal-5{top:7%;width:14px;height:16px}
+}
+
+/* The descriptor sits above the final letters; the ink follows the cutout. */
+.portrait-nameplate .portrait-caption{align-self:flex-end;width:60%;text-align:center}
+.portrait-motion{position:relative}
+.portrait-ink{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;overflow:visible}
+.about-endcap .portrait-fan{position:static;width:56px;height:48px;display:block;margin:28px auto 0;rotate:none;color:#de3021;stroke-width:1.3}
+@media(max-width:700px){
+  .portrait-nameplate{left:50%;right:auto;width:max-content;max-width:100%;translate:-52.5% 0}
+  .portrait-nameplate .portrait-caption{width:64%}
+  .about-endcap .portrait-fan{width:49px;height:42px;margin-top:25px}
+}
+
+/* Close the gap and optically align the descriptor with the final A's ink. */
+.portrait-nameplate{--portrait-name-size:clamp(104px,11.4vw,190px);align-items:flex-end;gap:0}
+.portrait-nameplate .portrait-name{font-size:var(--portrait-name-size)}
+.portrait-nameplate .portrait-caption{width:auto;white-space:nowrap;text-align:right;margin-bottom:-4px;translate:calc(var(--portrait-name-size)*.013 + 1px) 0}
+@media(min-width:701px) and (max-width:1050px){.portrait-nameplate{--portrait-name-size:110px}}
+@media(max-width:700px){
+  .portrait-nameplate{--portrait-name-size:26.6vw}
+  .portrait-nameplate .portrait-caption{width:auto;margin-bottom:-2px;translate:calc(var(--portrait-name-size)*.013 + .7px) 0}
+}
+
+/* Dragging controls the same position as autoplay; vertical touch scroll stays native. */
+.feedback-rail{cursor:grab;overflow:hidden;touch-action:pan-y;user-select:none}
+.feedback-rail .message-source{cursor:grab}
+.feedback-rail.dragging,.feedback-rail.dragging button{cursor:grabbing}
+.feedback-track{animation:none!important;will-change:transform}
+.feedback-card,.feedback-card button,.feedback-card img{user-select:none;-webkit-user-select:none}
+.feedback-card img{-webkit-user-drag:none;-webkit-touch-callout:none}
+@media(prefers-reduced-motion:reduce){.feedback-track{will-change:auto}}
+
+/* The same rightmost ink edge at every font size. */
+.portrait-nameplate .portrait-caption{translate:var(--caption-ink-shift,0px) 0}
+.about-artwork{margin-bottom:35px}
+.about-bio{padding-top:30px}
+.about-bio-heading h3{margin-top:0}
+
+
+.manifesto-sticky{isolation:isolate;overflow:hidden}
+.manifesto-sticky>.eyebrow,.manifesto-text,.manifesto-foot{position:relative;z-index:2}
+.manifesto-text{max-width:76%;margin-inline:auto}
+#film-dialog.modal-arriving::backdrop{animation-duration:.5s}
+#film-dialog.modal-leaving::backdrop{animation-duration:.28s}
+@media(max-width:1000px) and (min-width:701px){
+}
+@media(max-width:700px){
+  .about-artwork{margin-bottom:55px}
+  .about-bio{padding-top:25px}
+  .about-bio-heading h3{margin-top:0}
+  .manifesto-text{max-width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+}
+
+/* One bold uppercase family for the three words in the portrait composition. */
+.manifesto-text{max-width:none}
+.about-artwork{--portrait-letter-size:clamp(72px,10vw,144px)}
+.portrait-hello,.portrait-intro,.portrait-nameplate .portrait-name{font-family:'Anton',Impact,sans-serif;font-weight:400;font-style:normal;text-transform:uppercase;letter-spacing:-.02em;line-height:1;rotate:none;-webkit-text-stroke:0}
+.portrait-hello{left:max(0px,calc(50% - var(--cutout-width)*1.04));top:17%;font-size:var(--portrait-letter-size);z-index:1}
+.portrait-intro{left:max(0px,calc(50% - var(--cutout-width)*.98));top:60%;font-size:var(--portrait-letter-size)}
+.portrait-nameplate{--portrait-name-size:var(--portrait-letter-size)}
+.portrait-nameplate .portrait-name{font-size:var(--portrait-letter-size)}
+@media(min-width:701px) and (max-width:1050px){
+  .portrait-intro{top:63%}
+}
+@media(max-width:700px){
+  .about-artwork{--portrait-letter-size:23.2vw}
+  .portrait-hello{left:0;top:11%;font-size:21vw}
+  .portrait-intro{left:0;right:auto;top:59%;font-size:21vw}
+  .portrait-nameplate{--portrait-name-size:var(--portrait-letter-size)}
+}

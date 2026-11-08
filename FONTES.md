@@ -33,3 +33,6 @@ Quando houver um arquivo autorizado para uso web (de preferência WOFF2), ele po
 
 ## Estabilidade da abertura em recargas
 Bebas Neue e Mrs Saint Delafield são hospedadas localmente e pré-carregadas no HTML. Ambas usam font-display:block para não mostrar o nome numa fonte substituta durante a recarga. A assinatura está em assets/fonts/mrs-saint-delafield-latin.woff2, convertida do arquivo oficial Google Fonts e acompanhada de OFL-Mrs-Saint-Delafield.txt. Essas fontes são usadas no desktop e no mobile; o posicionamento mobile foi preservado.
+
+## Composição HELLO / MEET / FERNANDA
+Os três textos do retrato usam Anton em caixa alta, hospedada localmente em assets/fonts/anton-latin.woff2, com OFL-Anton.txt. O nome da abertura mantém Bebas Neue e a assinatura anterior.

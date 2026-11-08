@@ -59,3 +59,39 @@ A área de retenção da abertura usa o mesmo vermelho da faixa e do manifesto, 
 
 ## Ajuste atual — prévia local
 Linha narrativa completamente removida do HTML, CSS e JavaScript, incluindo corações, marcadores e callbacks de scroll. Mantida a rolagem natural da abertura e do manifesto. Textos/controles visuais Assistir ao filme removidos dos quatro vídeos e das descrições. Cada vídeo permanece como botão acessível e abre o player completo ao clique ou pelo teclado. Fontes locais e pré-carregamento preservados. Sem deploy.
+
+## Vídeo atualizado na abertura
+O hero usa hero-film-enhanced.mp4: os 18 segundos completos da versão tratada em 1080 × 1920, otimizada em H.264 e sem áudio. A capa hero-film-enhanced-poster.jpg vem da mesma versão. Reprodução em loop, pausa fora da tela e preferência de movimento reduzido preservadas.
+
+## Conversão, cinema e navegação
+Seção de filmes em fundo escuro, mantendo os quatro vídeos clicáveis. Diálogos de filme e mensagens com entrada/saída suaves, fechamento por Escape, fundo ou botão, foco restaurado sem deslocar a página e respeito a movimento reduzido. Novos blocos O diferencial do mobile (agilidade, vertical nativo e presença discreta) e Como eu trabalho (marcas, coberturas sociais e beleza/lifestyle). Prazo combinado sem promessa fixa; collabs indicadas no bloco de serviços. Menu mobile em tela inteira, foco contido, conteúdo de fundo inerte, áreas de toque de 44px e fechamento ao navegar/mudar para desktop. WhatsApp fixo com safe-area: ícone compacto sobre a abertura para preservar Explore, texto visível nas outras seções no mobile e controle discreto no desktop. Oculto em menus e diálogos. Scrollbars em tons do site. Sintaxe/build, estrutura/âncoras, estados dos diálogos e foco do menu verificados; sem publicação.
+
+## Apresentação fotográfica da Fernanda
+Sobre redesenhado como composição editorial: recorte da foto nova centralizado sobre creme, Oiiiie, Conheça a e FERNANDA em português, com pequenos desenhos vetoriais estáticos de celular, estrelas e leque. Recorte gerado a partir da foto enviada, salvo com transparência real em assets/fernanda-recorte-v2.png. Textos e desenhos permanecem em HTML/SVG/CSS, sem colchetes de programação nem texto incorporado ao PNG. Mobile reorganiza as palavras ao redor da foto e mantém FERNANDA na base. Biografia preservada abaixo; link e marca centralizados. Seção em fluxo natural, com entrada discreta da foto/texto e movimento reduzido respeitado. Sem deploy.
+
+## Aproximação da composição
+Oiiie em Manrope com caixa preservada para distinguir os i; nome FERNANDA ampliado. Saudação, Conheça a e ondas posicionados em relação à largura do recorte, com sobreposição dos traços nas laterais do corpo. Celular e estrelas removidos; leque preservado. Retenção breve aplicada a todas as seções exceto o Sobre, que continua em fluxo natural. Hover do WhatsApp desktop com expansão mais suave, leve elevação e inclinação do ícone; movimento reduzido respeitado. Sem deploy.
+
+## Duas fotos em continuidade
+Segundo recorte transparente da foto de camiseta branca em assets/fernanda-recorte-invertido-v1.png. Apresentado a 180 graus abaixo do primeiro, com largura calculada para aproximar os recortes de roupa. As duas composições compartilham uma elevação adicional ligada ao scroll, mantendo a emenda durante o movimento. Nova frase Vai ser / um prazer / trabalhar com você e ondas em volta do segundo retrato. Sobre continua sem retenção. Nos filmes desktop, cena ampliada de 175svh para 230svh; subida distribuída por 82% do percurso e curva smoothstep em lugar da aceleração inicial cúbica. Mobile mantém os cards de filmes existentes. Redução de movimento mantém os retratos estáticos e a inversão intencional. Validados estrutura, transparência, sintaxe/build e redução do deslocamento para a mesma distância de scroll. Sem deploy.
+
+## Retorno à foto única
+Segunda foto invertida e movimento compartilhado removidos da página. Mantida a subida mais lenta dos vídeos. Ondas do retrato substituídas por pinceladas vetoriais translúcidas, com textura e espessuras diferentes, sem animação narrativa. Saudação oiiie em caixa baixa; legenda Criadora de vídeos e histórias em preto; FERNANDA deslocado para a esquerda, com sobreposição maior no recorte e ajuste próprio no mobile. Sem deploy.
+
+## Estudo de mangá e sakura
+Ondas removidas para testar cinco pétalas de sakura e dois pequenos conjuntos de traços de mangá, todos vetoriais, com leque preservado. Legenda preta agrupada ao nome em um mesmo bloco para manter o alinhamento central no desktop e mobile. oiiie mais próximo da foto; Conheça a em Bodoni Moda itálico no lugar da fonte manuscrita usada também no antigo um prazer. Foto única, corpo e rosto preservados. Sem deploy.
+
+## Contorno de nanquim
+Riscos de mangá removidos. Contorno decorativo em assets/fernanda-contorno-nanquim.svg, derivado da borda de transparência do recorte original, com seis pinceladas interrompidas e variação de pressão. Sobreposição usa o mesmo quadro e o mesmo movimento da foto. Pétalas mantidas. Legenda preta alinhada sobre a parte final do nome, à direita, em vez do centro da palavra inteira. Leque centralizado no fechamento da seção. Sem deploy.
+
+## Legenda rente e nanquim reforçado
+Legenda aproximada do nome, alinhada à direita e com ajuste óptico para terminar no último A. Contorno em fernanda-contorno-nanquim-v2.svg com onze pinceladas mais fortes, incluindo trechos adicionais de cabelo, cintura e roupa. Foto original do Sobre preservada; testes de metade mangá não foram aplicados ao site. Sem deploy.
+
+## Carrossel com arraste
+Posição compartilhada entre autoplay e arraste por Pointer Events no desktop e mobile. Segurar pausa; arrastar controla diretamente os prints e soltar aplica uma desaceleração breve antes de retomar o movimento automático. Toque/clique curto abre o original; arraste ou pressão longa bloqueiam o clique acidental. Gesto vertical continua rolando a página. Direção automática da esquerda para a direita preservada, sem pausa por hover; controle de pausa, foco por teclado, setas, movimento reduzido e suspensão fora da tela mantidos. Estados de interação verificados com teste local. Sem deploy.
+
+## Mais movimento nos blocos editoriais
+Serviços reformulados em três filmes com loops silenciosos leves (seis segundos cada), títulos curtos e uma frase por categoria; deslize horizontal no mobile. Novo título Qual história vem agora. Manifesto preserva a frase e recebe dois pequenos recortes de eventos nas laterais, com parallax discreto e centro livre para leitura. Novos vídeos usam o mesmo controle de visibilidade, pausa durante os diálogos e movimento reduzido. Removido Antes da câmera, a curiosidade; biografia aproximada da composição. Legenda do nome alinhada pela borda real dos glifos via Canvas e reavaliada no carregamento das fontes/resize. Player de filme entra com aproximação visível (escala .86 a 1 em 500ms) e fundo sincronizado, com saída de 280ms; mensagens mantêm a transição anterior. Validados codificação dos loops, markup, alinhamento estável em quatro larguras e estados dos modais. Sem deploy.
+
+## Remoções e referência em caixa alta
+Vídeos decorativos do manifesto removidos. Seção Qual história vem agora removida por inteiro, com links de menu retirados e CTA do benefício mobile redirecionado ao contato. Composição do Sobre usa HELLO / MEET / FERNANDA na mesma fonte Anton, em caixa alta, preservando o recorte, as pétalas, o nanquim e a legenda preta. Mobile adaptado para manter as palavras dentro da tela. Sem deploy.
