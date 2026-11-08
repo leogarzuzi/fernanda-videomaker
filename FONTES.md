@@ -30,3 +30,6 @@ https://pixelsurplus.com/products/harmony-modern-serif-font
 No fornecedor há uma opção específica de licença Web Font. Não foi feita compra e não foi incorporado o arquivo gratuito de uso pessoal ao portfólio comercial. Bodoni Moda foi aplicada como alternativa com licença aberta.
 
 Quando houver um arquivo autorizado para uso web (de preferência WOFF2), ele poderá ser incorporado localmente com @font-face e aplicado aos títulos editoriais. A assinatura tipográfica Tahara é um recurso separado e deve ser preservada.
+
+## Estabilidade da abertura em recargas
+Bebas Neue e Mrs Saint Delafield são hospedadas localmente e pré-carregadas no HTML. Ambas usam font-display:block para não mostrar o nome numa fonte substituta durante a recarga. A assinatura está em assets/fonts/mrs-saint-delafield-latin.woff2, convertida do arquivo oficial Google Fonts e acompanhada de OFL-Mrs-Saint-Delafield.txt. Essas fontes são usadas no desktop e no mobile; o posicionamento mobile foi preservado.

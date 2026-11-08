@@ -56,3 +56,6 @@ Rodapé dos filmes e controle de pausa das prévias removidos. Por trás do olha
 
 ## Continuidade da abertura e refinamentos
 A área de retenção da abertura usa o mesmo vermelho da faixa e do manifesto, sem centralizar verticalmente a abertura dentro da retenção. Isso evita a faixa clara na passagem entre as seções, inclusive com alturas de viewport diferentes no Safari. Me conta a sua ideia centralizado na coluna, legenda dos feedbacks com mais contraste e carrossel sem pausa por hover. Pausa explícita, foco, diálogo e movimento reduzido continuam disponíveis.
+
+## Ajuste atual — prévia local
+Linha narrativa completamente removida do HTML, CSS e JavaScript, incluindo corações, marcadores e callbacks de scroll. Mantida a rolagem natural da abertura e do manifesto. Textos/controles visuais Assistir ao filme removidos dos quatro vídeos e das descrições. Cada vídeo permanece como botão acessível e abre o player completo ao clique ou pelo teclado. Fontes locais e pré-carregamento preservados. Sem deploy.
