@@ -143,7 +143,7 @@ document.addEventListener('keydown',event=>{
   if(mobileMenu.hidden)return;
   if(event.key==='Escape'){event.preventDefault();closeMenu();return;}
   if(event.key==='Tab'){
-    const controls=[document.querySelector('.brand'),menuToggle,...mobileMenu.querySelectorAll('a')];
+    const controls=[document.querySelector('.brand'),menuToggle,...mobileMenu.querySelectorAll('a:not([hidden])')];
     const first=controls[0],last=controls.at(-1);
     if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
     else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
@@ -184,8 +184,8 @@ document.querySelectorAll('dialog').forEach(modal=>{
   modal.addEventListener('cancel',event=>{event.preventDefault();closeSoftDialog(modal);});
   modal.addEventListener('close',()=>{dialogMotions.get(modal)?.animation?.cancel();dialogMotions.delete(modal);modal.classList.remove('modal-arriving','modal-leaving');});
 });
-const dialog=document.querySelector('#film-dialog'),player=document.querySelector('#film-player'),playbackMessage=document.querySelector('#playback-message');const films={'1':{title:'Os três anos da Liz.',file:'filme-01'},'2':{title:'Beleza em movimento.',file:'filme-02'},'3':{title:'Um dia de fé.',file:'filme-03'},'4':{title:'Memória viva.',file:'filme-04'}};let previousFocus;
-document.querySelectorAll('[data-film]').forEach(button=>button.addEventListener('click',async()=>{const film=films[button.dataset.film];previousFocus=button;document.querySelector('#film-title').textContent=film.title;player.src=`assets/${film.file}.mp4`;player.poster=`assets/${film.file}-poster.jpg`;player.setAttribute('aria-label',film.title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();openSoftDialog(dialog);try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}}));player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
+const dialog=document.querySelector('#film-dialog'),player=document.querySelector('#film-player'),playbackMessage=document.querySelector('#playback-message');let previousFocus;
+document.querySelectorAll('[data-film]').forEach(button=>button.addEventListener('click',async()=>{const card=button.closest('.film-card');const video=card.querySelector('.film-preview');const title=card.querySelector('.film-story h3').textContent;previousFocus=button;document.querySelector('#film-title').textContent=title;player.src=video.getAttribute('src')||video.querySelector('source').src;if(video.poster)player.poster=video.poster;else player.removeAttribute('poster');player.setAttribute('aria-label',title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();openSoftDialog(dialog);try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}}));player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
 dialog.addEventListener('closing',()=>player.pause());
 dialog.querySelector('.close-player').addEventListener('click',()=>closeSoftDialog(dialog));dialog.addEventListener('close',()=>{player.pause();player.removeAttribute('src');player.load();dialogOpen=false;syncMedia();previousFocus?.focus({preventScroll:true});});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeSoftDialog(dialog);}});
 const revealObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}});},{threshold:.07});document.querySelectorAll('[data-reveal]').forEach(el=>revealObserver.observe(el));
@@ -210,9 +210,9 @@ async function copyContactText(text,trigger){
   field.remove();trigger.focus({preventScroll:true});
   return copied;
 }
-function bindContactCopy(button,text,label){
+function bindContactCopy(button,field,label){
   button.addEventListener('click',async()=>{
-    const copied=await copyContactText(text,button);
+    const copied=await copyContactText(button.dataset[field],button);
     clearTimeout(resetTimers.get(button));clearTimeout(statusTimer);
     button.classList.toggle('copied',copied);
     copyStatus.textContent=copied?`${label} copiado.`:`Não foi possível copiar. Selecione o ${label.toLowerCase()} e copie manualmente.`;
@@ -220,8 +220,8 @@ function bindContactCopy(button,text,label){
     statusTimer=setTimeout(()=>{copyStatus.textContent='';},5000);
   });
 }
-bindContactCopy(emailButton,emailButton.dataset.email,'E-mail');
-bindContactCopy(phoneButton,phoneButton.dataset.phone,'Telefone');
+bindContactCopy(emailButton,'email','E-mail');
+bindContactCopy(phoneButton,'phone','Telefone');
 
 // Sections stay in normal document flow; only their content follows scroll.
 function navigateToSection(hash){
@@ -252,17 +252,18 @@ feedbackTrack.querySelectorAll('img').forEach(image=>image.draggable=false);
 const feedbackMotion=document.querySelector('#feedback-motion');
 let feedbackPaused=false,feedbackVisible=false,feedbackHeld=false,feedbackDrag=null;
 let feedbackPeriod=0,feedbackPosition=0,feedbackVelocity=0,feedbackFrame=0,feedbackLastTime=0;
+let feedbackOverflows=false;
 let feedbackBlockClickUntil=0;
 function paintFeedback(){
-  if(!feedbackPeriod)return;
-  if(reducedMotion.matches)feedbackPosition=Math.max(0,Math.min(feedbackPosition,Math.max(0,feedbackPeriod-feedbackRail.clientWidth)));
+  if(!feedbackOverflows)feedbackPosition=0;
+  else if(reducedMotion.matches)feedbackPosition=Math.max(0,Math.min(feedbackPosition,Math.max(0,feedbackPeriod-feedbackRail.clientWidth)));
   else feedbackPosition=((feedbackPosition%feedbackPeriod)+feedbackPeriod)%feedbackPeriod;
   feedbackTrack.style.transform=`translate3d(${-feedbackPosition}px,0,0)`;
 }
 function feedbackKeyboardFocus(){return feedbackRail.contains(document.activeElement)&&document.activeElement.matches(':focus-visible');}
 function tickFeedback(time){
   feedbackFrame=0;
-  if(reducedMotion.matches||feedbackPaused||feedbackHeld||!feedbackVisible||document.hidden||feedbackRail.classList.contains('is-reading')||feedbackKeyboardFocus())return;
+  if(!feedbackOverflows||reducedMotion.matches||feedbackPaused||feedbackHeld||!feedbackVisible||document.hidden||feedbackRail.classList.contains('is-reading')||feedbackKeyboardFocus())return;
   const elapsed=feedbackLastTime?Math.min(48,time-feedbackLastTime):0;
   feedbackLastTime=time;
   if(Math.abs(feedbackVelocity)>.012){
@@ -271,18 +272,24 @@ function tickFeedback(time){
   }else{feedbackVelocity=0;feedbackPosition-=feedbackPeriod/90000*elapsed;}
   paintFeedback();feedbackFrame=requestAnimationFrame(tickFeedback);
 }
-function startFeedback(){if(!feedbackFrame){feedbackLastTime=0;feedbackFrame=requestAnimationFrame(tickFeedback);}}
+function startFeedback(){if(feedbackOverflows&&!feedbackFrame){feedbackLastTime=0;feedbackFrame=requestAnimationFrame(tickFeedback);}}
 function syncFeedbackMotion(){
   feedbackRail.classList.toggle('is-paused',feedbackPaused);
   feedbackMotion.setAttribute('aria-pressed',String(feedbackPaused));
   feedbackMotion.setAttribute('aria-label',feedbackPaused?'Reproduzir carrossel':'Pausar carrossel');
-  feedbackMotion.hidden=reducedMotion.matches;
+  feedbackMotion.hidden=!feedbackOverflows||reducedMotion.matches;
+  feedbackClone.hidden=feedbackMotion.hidden;
+  feedbackRail.classList.toggle('is-static',!feedbackOverflows);
   startFeedback();
 }
 function measureFeedback(){
   const ratio=feedbackPeriod?feedbackPosition/feedbackPeriod:0;
   feedbackPeriod=feedbackGroup.getBoundingClientRect().width;
-  feedbackPosition=feedbackPeriod*ratio;paintFeedback();startFeedback();
+  const railStyle=getComputedStyle(feedbackRail);
+  const available=feedbackRail.clientWidth-parseFloat(railStyle.paddingLeft)-parseFloat(railStyle.paddingRight);
+  const cardsWidth=feedbackPeriod-parseFloat(getComputedStyle(feedbackGroup).paddingRight);
+  feedbackOverflows=feedbackGroup.children.length>1&&cardsWidth>available;
+  feedbackPosition=feedbackPeriod*ratio;paintFeedback();syncFeedbackMotion();
 }
 feedbackMotion.addEventListener('click',()=>{feedbackPaused=!feedbackPaused;syncFeedbackMotion();});
 new IntersectionObserver(entries=>{
@@ -290,14 +297,16 @@ new IntersectionObserver(entries=>{
   if(!feedbackVisible)feedbackVelocity=0;
   startFeedback();
 }).observe(feedbackRail);
-new ResizeObserver(measureFeedback).observe(feedbackGroup);
+const feedbackResize=new ResizeObserver(measureFeedback);
+feedbackResize.observe(feedbackGroup);
+feedbackResize.observe(feedbackRail);
 document.fonts.ready.then(measureFeedback);
 document.addEventListener('visibilitychange',startFeedback);
-reducedMotion.addEventListener('change',()=>{feedbackPosition=0;feedbackVelocity=0;measureFeedback();syncFeedbackMotion();});
+reducedMotion.addEventListener('change',()=>{feedbackPosition=0;feedbackVelocity=0;measureFeedback();});
 feedbackRail.addEventListener('dragstart',event=>event.preventDefault());
 feedbackRail.addEventListener('contextmenu',event=>{if(feedbackHeld)event.preventDefault();});
 feedbackRail.addEventListener('pointerdown',event=>{
-  if(!event.isPrimary||(event.pointerType==='mouse'&&event.button!==0))return;
+  if(!feedbackOverflows||!event.isPrimary||(event.pointerType==='mouse'&&event.button!==0))return;
   feedbackHeld=true;feedbackVelocity=0;
   feedbackDrag={id:event.pointerId,x:event.clientX,y:event.clientY,position:feedbackPosition,lastX:event.clientX,lastTime:performance.now(),started:performance.now(),horizontal:false};
 });
@@ -342,13 +351,13 @@ feedbackRail.addEventListener('focusin',event=>{
 });
 feedbackRail.addEventListener('focusout',()=>queueMicrotask(startFeedback));
 feedbackRail.addEventListener('keydown',event=>{
-  if(!['ArrowLeft','ArrowRight'].includes(event.key))return;
+  if(!feedbackOverflows||!['ArrowLeft','ArrowRight'].includes(event.key))return;
   event.preventDefault();feedbackVelocity=0;
   const card=feedbackGroup.querySelector('.feedback-card');
   const gap=parseFloat(getComputedStyle(feedbackGroup).columnGap)||28;
   feedbackPosition+=(event.key==='ArrowRight'?1:-1)*(card.getBoundingClientRect().width+gap);paintFeedback();
 });
-measureFeedback();syncFeedbackMotion();
+measureFeedback();
 
 const feedbackDialog=document.querySelector('#feedback-dialog');
 const feedbackOriginal=document.querySelector('#feedback-original');
@@ -358,7 +367,9 @@ feedbackRail.addEventListener('click',event=>{
   const button=event.target.closest('[data-message]');
   if(!button)return;
   feedbackRail.classList.add('is-reading');
-  feedbackTrigger=feedbackGroup.querySelector(`[data-message="${button.dataset.message}"]`)||button;
+  const group=button.closest('.feedback-group');
+  const index=[...group.children].indexOf(button.closest('.feedback-card'));
+  feedbackTrigger=feedbackGroup.children[index]?.querySelector('button')||button;
   feedbackOriginal.src=button.dataset.message;
   dialogOpen=true;syncMedia();openSoftDialog(feedbackDialog);
 });
@@ -483,3 +494,12 @@ window.visualViewport?.addEventListener('resize',queueFloatingContact);
 new ResizeObserver(queueFloatingContact).observe(document.querySelector('main'));
 document.fonts.ready.then(queueFloatingContact);
 paintFloatingContact();
+
+// The published content is optional; the original page renders immediately.
+fetch('/api/portfolio').then(response=>response.ok?response.json():null).then(async saved=>{
+  if(!saved?.content)return;
+  const {applyContent}=await import('/portfolio-content.js?v=2');
+  applyContent(saved.content);
+  measureFeedback();
+  syncMedia();
+}).catch(()=>{});

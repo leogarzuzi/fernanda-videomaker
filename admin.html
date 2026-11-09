@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f5eee4">
+  <title>Área administrativa · Tahara Films</title>
+  <link rel="stylesheet" href="/admin.css?v=5">
+  <script type="module" src="/admin.js?v=4"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="top">
+      <a class="fan-link" href="/" aria-label="Voltar ao portfólio">
+        <svg class="fan-mark" viewBox="0 0 120 100" aria-hidden="true">
+          <symbol id="admin-fan" viewBox="0 0 120 100">
+            <path d="M60 84L1.11 50A68 68 0 0 1 118.89 50Z"/>
+            <path d="M60 84L1.11 50.00 M60 84L9.47 38.50 M60 84L20.03 28.99 M60 84L32.34 21.88 M60 84L45.86 17.49 M60 84L60.00 16.00 M60 84L74.14 17.49 M60 84L87.66 21.88 M60 84L99.97 28.99 M60 84L110.53 38.50 M60 84L118.89 50.00"/>
+            <path d="M43.55 74.5A19 19 0 0 1 76.45 74.5M57 85Q61 95 67 85"/>
+          </symbol>
+          <use href="#admin-fan"/>
+        </svg>
+      </a>
+      <button type="button" id="logout" class="logout" aria-label="Sair" title="Sair" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4H5v16h7m-2-8h11m-4-4 4 4-4 4"/></svg>
+      </button>
+    </header>
+    <p id="initial" class="notice" role="status"></p>
+    <section id="login" class="login" aria-label="Login" hidden>
+      <form id="login-form">
+        <label class="login-field">
+          <input name="user" required autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder=" ">
+          <span>E-mail</span>
+        </label>
+        <label class="login-field">
+          <input name="password" type="password" required autocomplete="current-password" placeholder=" ">
+          <span>Senha</span>
+        </label>
+        <button class="primary login-submit" type="submit" aria-label="Entrar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+        </button>
+        <p class="notice" id="login-status" role="status"></p>
+      </form>
+    </section>
+    <section id="dashboard" aria-label="Edição do portfólio" hidden>
+      <form id="editor">
+        <fieldset id="editor-fields">
+          <section class="editor-section" id="abertura">
+            <h2>Página inicial</h2>
+            <div class="section-fields" id="hero-fields"></div>
+            <figure class="section-guide">
+              <img src="/assets/admin-guides/abertura.jpg" width="1100" height="720" alt="Capa do portfólio com o nome de Fernanda sobre o vídeo de abertura.">
+              <figcaption>Referência da seção</figcaption>
+            </figure>
+          </section>
+          <section class="editor-section" id="filmes">
+            <h2>Histórias <em>em cena.</em></h2>
+            <div class="section-fields" id="film-fields"></div>
+            <figure class="section-guide">
+              <img src="/assets/admin-guides/filmes.jpg" width="1100" height="720" loading="lazy" alt="Um dos filmes do portfólio, com o vídeo ao lado do tema, título e descrição.">
+              <figcaption>Referência da seção</figcaption>
+            </figure>
+          </section>
+          <section class="editor-section" id="sobre">
+            <h2>Pode me chamar de <em>Fê.</em></h2>
+            <div class="section-fields">
+              <p>Separe os parágrafos da biografia com uma linha em branco.</p>
+              <div id="about-fields"></div>
+            </div>
+            <figure class="section-guide">
+              <img src="/assets/admin-guides/sobre.jpg" width="1100" height="720" loading="lazy" alt="Apresentação Pode me chamar de Fê com a biografia e a frase de assinatura.">
+              <figcaption>Referência da seção</figcaption>
+            </figure>
+          </section>
+          <section class="editor-section" id="depoimentos">
+            <h2>Cada história, <em>um caminho.</em></h2>
+            <div class="section-fields">
+              <div id="feedback-fields"></div>
+              <p id="feedback-empty" hidden>Nenhum cartão. Adicione um para exibir a seção no portfólio.</p>
+              <button class="outline add-card" type="button" id="add-feedback"><span aria-hidden="true">+</span> Adicionar cartão</button>
+            </div>
+            <figure class="section-guide">
+              <img src="/assets/admin-guides/feedbacks.jpg" width="1100" height="720" loading="lazy" alt="Carrossel Cada história, um caminho com cartões de mensagens.">
+              <figcaption>Referência da seção</figcaption>
+            </figure>
+          </section>
+          <section class="editor-section" id="contatos">
+            <h2>Contato</h2>
+            <div class="section-fields" id="contact-fields"></div>
+            <figure class="section-guide">
+              <img src="/assets/admin-guides/contato.jpg" width="1100" height="720" loading="lazy" alt="Rodapé do portfólio com os links do Instagram e WhatsApp e os botões de copiar.">
+              <figcaption>Referência da seção</figcaption>
+            </figure>
+          </section>
+        </fieldset>
+        <div class="save-bar">
+          <p class="notice" id="save-status" role="status" aria-live="polite"></p>
+          <button class="primary save-button" type="submit" id="save" disabled>
+            Salvar <svg class="fan-mark" viewBox="0 0 120 100" aria-hidden="true"><use href="#admin-fan"/></svg>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

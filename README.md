@@ -1,5 +1,23 @@
 # Fernanda Tahara — versão 2
 
+## Área administrativa
+
+Com Node.js 22.9 ou superior, execute na pasta do projeto:
+
+```powershell
+npm.cmd ci
+npm.cmd run setup-admin
+npm.cmd run dev
+```
+
+Abra http://localhost:4173/admin. O comando de configuração gera uma senha e exibe as credenciais no terminal na primeira execução. Elas ficam no arquivo `.env` local e são lidas a cada tentativa de acesso. O site e o painel usam o mesmo servidor. Com `npm.cmd run dev`, as mudanças de código do servidor são recarregadas automaticamente. Para conferir alterações visuais, atualize a página.
+
+O painel edita a abertura, os quatro filmes, a biografia, os cartões de feedback e os contatos. Cada seção tem uma imagem fixa de referência. É possível adicionar e remover cartões, até o limite de 24. A seção de feedback fica oculta no portfólio quando não há cartões. O botão **Salvar alterações** aplica as mudanças. O painel aceita vídeos MP4 de até 150 MB e imagens JPG, PNG ou WebP de até 8 MB. Na versão local, os dados e uploads ficam em `.portfolio-data/`.
+
+### Hospedagem na Vercel
+
+Conecte um armazenamento **Vercel Blob público** ao projeto para disponibilizar `BLOB_READ_WRITE_TOKEN`. Configure `ADMIN_USER` e `ADMIN_PASSWORD` nas variáveis do ambiente da Vercel. Use uma senha aleatória de pelo menos 16 caracteres e credenciais próprias para produção. Faça um novo deploy e acesse `/admin` pelo domínio publicado. Os uploads e as edições feitas no painel publicado ficam no Blob e são independentes dos arquivos de desenvolvimento local. Para separar edições de teste e produção, use armazenamentos diferentes por ambiente.
+
 Execute `npm run dev` nesta pasta e abra http://localhost:4173. HTML, CSS e JavaScript, sem dependências Node. Google Fonts tem fontes locais de fallback.
 
 Direção visual: composição fotográfica, paleta mineral, tipografia condensada e serifada, cortes diagonais. Inspiração de escala e personalidade: https://www.worksruthi.com/. Não usa imagens, textos ou código da referência. A foto do sobre é a original enviada. Prints do portfólio e o recorte por IA da versão 1 não são usados.

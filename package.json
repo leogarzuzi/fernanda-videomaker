@@ -1,1 +1,17 @@
-{"name":"fernanda-tahara","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node server.mjs","start":"node server.mjs","build":"node build.mjs","check":"node --check script.js && node --check server.mjs && node --check build.mjs"}}
+{
+  "name": "fernanda-tahara",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.9.0" },
+  "scripts": {
+    "dev": "node --watch --watch-preserve-output server.mjs",
+    "start": "node server.mjs",
+    "setup-admin": "node setup-admin.mjs",
+    "build": "node build.mjs",
+    "check": "node --check script.js && node --check server.mjs && node --check build.mjs && node --check admin.js && node --check portfolio-api.mjs && node --check portfolio-content.js && node --check portfolio-fields.js && node --check api/portfolio.mjs && node --check setup-admin.mjs"
+  },
+  "dependencies": { "@vercel/blob": "2.9.0" },
+  "devDependencies": { "esbuild": "0.28.2" },
+  "overrides": { "zod": "4.6.7" }
+}

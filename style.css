@@ -48,7 +48,7 @@ summary{gap:0}details>p{margin-left:0}
 .contact-phone{margin-top:35px}
 .copy-email{position:relative;isolation:isolate;overflow:hidden;transition:color .45s ease,border-color .4s ease;background:transparent}
 .copy-email::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:#f5f4ef;transform:scaleY(0);transform-origin:center bottom;transition:transform .48s cubic-bezier(.22,.72,.24,1)}
-.copy-email .email-copy-label{display:flex;line-height:1.35;user-select:none;overflow:visible;overflow-wrap:normal}
+.copy-email .email-copy-label{display:flex;flex-wrap:wrap;min-width:0;line-height:1.35;user-select:none}
 .email-letter-mask{display:block;height:1.35em;overflow:hidden}
 .email-letter{display:block;position:relative;white-space:pre;transform:translateY(0);transition:transform .46s cubic-bezier(.22,.72,.24,1);transition-delay:0ms;color:#f0eee8}
 .email-letter::after{content:attr(data-letter);position:absolute;left:0;top:100%;color:#3c0c06}
@@ -656,6 +656,9 @@ body.menu-open .whatsapp-float,body:has(dialog[open]) .whatsapp-float{visibility
 /* Dragging controls the same position as autoplay; vertical touch scroll stays native. */
 .feedback-rail{cursor:grab;overflow:hidden;touch-action:pan-y;user-select:none}
 .feedback-rail .message-source{cursor:grab}
+#feedbacks[hidden],#mobile-menu .menu-link[hidden],.feedback-group[hidden],#feedback-motion[hidden]{display:none}
+.feedback-rail.is-static{cursor:default}
+.feedback-rail.is-static .message-source{cursor:pointer}
 .feedback-rail.dragging,.feedback-rail.dragging button{cursor:grabbing}
 .feedback-track{animation:none!important;will-change:transform}
 .feedback-card,.feedback-card button,.feedback-card img{user-select:none;-webkit-user-select:none}
