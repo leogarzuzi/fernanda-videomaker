@@ -136,7 +136,9 @@ async function readContent(local) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return { revision: null, content: null };
   const result = await get(contentFile, { access: 'public', useCache: false });
   if (!result) return { revision: null, content: null };
-  return { revision: result.blob.etag, content: await new Response(result.stream).json() };
+  // Blob reads can return a weak ETag for the same revision returned by a write.
+  const revision = result.blob.etag.replace(/^W\//, '');
+  return { revision, content: await new Response(result.stream).json() };
 }
 
 async function saveContent(local, revision, content) {
