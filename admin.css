@@ -134,7 +134,7 @@ button:disabled { cursor: default; opacity: .6; }
   padding: 0;
   margin-top: .3rem;
 }
-.login-submit svg {
+.login-submit svg, .back-to-login svg {
   width: 1.35rem;
   fill: none;
   stroke: currentColor;
@@ -144,7 +144,23 @@ button:disabled { cursor: default; opacity: .6; }
 }
 #login-status, #first-login-status { text-align: center; }
 #login-status:empty, #first-login-status:empty { display: none; }
+#first-login { text-align: center; }
 #first-login h1 { font: 400 2.2rem/1.1 var(--serif); margin: 0; }
+.back-to-login {
+  display: none;
+  grid-column: 1;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+}
+.back-to-login:hover:not(:disabled) { background: var(--line); }
+.shell:has(#first-login:not([hidden])) .top { width: min(100%, 360px); }
+.shell:has(#first-login:not([hidden])) .back-to-login { display: grid; }
 @media (prefers-reduced-motion: reduce) {
   .login-field span, .logout, .logout::before { transition: none; }
 }

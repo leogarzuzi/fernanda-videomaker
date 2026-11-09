@@ -5,7 +5,7 @@ import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { parseEnv, promisify } from 'node:util';
-import { BlobPreconditionFailedError, get, put } from '@vercel/blob';
+import { BlobNotFoundError, BlobPreconditionFailedError, get, head, put } from '@vercel/blob';
 import { handleUpload } from '@vercel/blob/client';
 import { fields, maxFeedbackCards, mediaTypes } from './portfolio-fields.js';
 
@@ -58,8 +58,14 @@ function passwordStorage(secret) {
 }
 
 async function readChosenPassword({ key, path }) {
-  const blob = await get(path, { access: 'public', useCache: false });
-  if (!blob) return null;
+  // Check storage first so the public CDN never caches a missing password record.
+  const metadata = await head(path).catch(error => {
+    if (error instanceof BlobNotFoundError) return null;
+    throw error;
+  });
+  if (!metadata) return null;
+  const blob = await get(metadata.downloadUrl, { access: 'public' });
+  if (!blob) throw new RequestError(503, 'A senha está sendo atualizada. Aguarde um instante e tente novamente.');
   const encrypted = Buffer.from(await new Response(blob.stream).arrayBuffer());
   if (encrypted.length !== 76) throw new Error('Invalid password record');
   const decipher = createDecipheriv('aes-256-gcm', key, encrypted.subarray(0, 12));
@@ -326,8 +332,9 @@ export async function portfolioApi(request, { local = false, client = 'local' } 
       if (!validPassword) throw new RequestError(401, 'E-mail ou senha incorretos.');
       if (action === 'choose-password') {
         const next = credentials.newPassword;
-        if (typeof next !== 'string' || next.length < 16 || next.length > 128 || !next.trim() || same(next, password)) {
-          throw new RequestError(400, 'Escolha uma senha diferente da provisória, com 16 a 128 caracteres.');
+        if (typeof next !== 'string' || next.length > 128
+          || !/^(?=.*\p{L})(?=.*[0-9])[\p{L}0-9]{8,128}$/u.test(next) || same(next, password)) {
+          throw new RequestError(400, 'Escolha uma senha diferente da provisória, com pelo menos 8 caracteres, usando apenas letras e números.');
         }
         await saveChosenPassword(storage, next);
       } else if (storage && !chosen) {
