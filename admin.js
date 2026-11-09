@@ -6,6 +6,11 @@ const login = find('#login');
 const dashboard = find('#dashboard');
 const initial = find('#initial');
 const loginForm = find('#login-form');
+const firstLogin = find('#first-login');
+const firstLoginForm = find('#first-login-form');
+const firstLoginStatus = find('#first-login-status');
+const backToLogin = find('#back-to-login');
+let provisionalCredentials;
 const editor = find('#editor');
 const editorFields = find('#editor-fields');
 const save = find('#save');
@@ -222,11 +227,15 @@ async function showDashboard(session) {
   notice(saveStatus, '');
   setDirty(false);
   login.hidden = true;
+  firstLogin.hidden = true;
   logout.hidden = false;
   dashboard.hidden = false;
 }
 
 function showLogin() {
+  provisionalCredentials = undefined;
+  firstLoginForm.reset();
+  firstLogin.hidden = true;
   dashboard.hidden = true;
   logout.hidden = true;
   login.hidden = false;
@@ -236,17 +245,55 @@ loginForm.addEventListener('submit', async event => {
   event.preventDefault();
   const form = new FormData(loginForm);
   form.set('user', form.get('user').trim());
+  const credentials = Object.fromEntries(form);
   const button = loginForm.querySelector('button');
   button.disabled = true;
   notice(loginStatus, 'Entrando…');
   try {
-    const session = await api('login', jsonRequest('POST', Object.fromEntries(form)));
+    const session = await api('login', jsonRequest('POST', credentials));
     loginForm.reset();
-    await showDashboard(session);
+    if (session.passwordChangeRequired) {
+      provisionalCredentials = credentials;
+      login.hidden = true;
+      firstLogin.hidden = false;
+      notice(loginStatus, '');
+      notice(firstLoginStatus, '');
+      firstLoginForm.elements.newPassword.focus();
+    } else {
+      await showDashboard(session);
+    }
   } catch (error) {
     notice(loginStatus, error.message, true);
   } finally {
     button.disabled = false;
+  }
+});
+
+backToLogin.addEventListener('click', () => {
+  showLogin();
+  loginForm.elements.user.focus();
+});
+
+firstLoginForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const fields = new FormData(firstLoginForm);
+  const newPassword = fields.get('newPassword');
+  if (newPassword !== fields.get('confirmPassword')) {
+    notice(firstLoginStatus, 'As duas senhas precisam ser iguais.', true);
+    return;
+  }
+  const submit = firstLoginForm.querySelector('button[type=submit]');
+  submit.disabled = backToLogin.disabled = true;
+  notice(firstLoginStatus, 'Salvando sua senha…');
+  try {
+    const session = await api('choose-password', jsonRequest('POST', { ...provisionalCredentials, newPassword }));
+    provisionalCredentials = undefined;
+    firstLoginForm.reset();
+    await showDashboard(session);
+  } catch (error) {
+    notice(firstLoginStatus, error.message, true);
+  } finally {
+    submit.disabled = backToLogin.disabled = false;
   }
 });
 

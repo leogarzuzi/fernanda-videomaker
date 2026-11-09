@@ -142,8 +142,9 @@ button:disabled { cursor: default; opacity: .6; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-#login-status { text-align: center; }
-#login-status:empty { display: none; }
+#login-status, #first-login-status { text-align: center; }
+#login-status:empty, #first-login-status:empty { display: none; }
+#first-login h1 { font: 400 2.2rem/1.1 var(--serif); margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .login-field span, .logout, .logout::before { transition: none; }
 }

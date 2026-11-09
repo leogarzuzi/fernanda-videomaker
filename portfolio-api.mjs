@@ -1,10 +1,10 @@
-import { createHmac, createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHmac, createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from 'node:crypto';
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
-import { parseEnv } from 'node:util';
+import { parseEnv, promisify } from 'node:util';
 import { BlobPreconditionFailedError, get, put } from '@vercel/blob';
 import { handleUpload } from '@vercel/blob/client';
 import { fields, maxFeedbackCards, mediaTypes } from './portfolio-fields.js';
@@ -17,6 +17,8 @@ const sessionSeconds = 8 * 60 * 60;
 const cookieName = 'tahara_admin';
 const attempts = new Map();
 const loginWindow = 15 * 60_000;
+const derivePassword = promisify(scrypt);
+const passwordOptions = { N: 2 ** 15, r: 8, p: 3, maxmem: 40 * 1024 ** 2 };
 let pendingLocalWrite = Promise.resolve();
 
 class RequestError extends Error {
@@ -47,6 +49,51 @@ function hasSession(request, user, password) {
   if (!value || !user || !password) return false;
   const [expiration, signature] = value.split('.');
   return Number(expiration) > Date.now() && same(signature, sessionSignature(expiration, user, password));
+}
+
+function passwordStorage(secret) {
+  const key = createHmac('sha256', secret).update('admin-password-encryption').digest();
+  const id = createHmac('sha256', secret).update('admin-password-path').digest('hex');
+  return { key, path: `portfolio/auth/${id}.bin` };
+}
+
+async function readChosenPassword({ key, path }) {
+  const blob = await get(path, { access: 'public', useCache: false });
+  if (!blob) return null;
+  const encrypted = Buffer.from(await new Response(blob.stream).arrayBuffer());
+  if (encrypted.length !== 76) throw new Error('Invalid password record');
+  const decipher = createDecipheriv('aes-256-gcm', key, encrypted.subarray(0, 12));
+  decipher.setAuthTag(encrypted.subarray(12, 28));
+  const record = Buffer.concat([decipher.update(encrypted.subarray(28)), decipher.final()]);
+  return { salt: record.subarray(0, 16), hash: record.subarray(16) };
+}
+
+async function saveChosenPassword(storage, password) {
+  const salt = randomBytes(16);
+  const hash = await derivePassword(password, salt, 32, passwordOptions);
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', storage.key, iv);
+  const encrypted = Buffer.concat([cipher.update(Buffer.concat([salt, hash])), cipher.final()]);
+  const record = Buffer.concat([iv, cipher.getAuthTag(), encrypted]);
+  try {
+    await put(storage.path, record, {
+      access: 'public', allowOverwrite: false, addRandomSuffix: false,
+      contentType: 'application/octet-stream',
+    });
+  } catch (error) {
+    if (error instanceof BlobPreconditionFailedError
+      || error.message?.startsWith('Vercel Blob: This blob already exists')
+      || await readChosenPassword(storage)) {
+      throw new RequestError(409, 'A senha já foi definida. Volte para entrar com sua nova senha.');
+    }
+    throw error;
+  }
+}
+
+function loginResponse(user, key, local) {
+  const expiration = Date.now() + sessionSeconds * 1000;
+  const value = `${expiration}.${sessionSignature(expiration, user, key)}`;
+  return json({ signedIn: true, local }, 200, { 'Set-Cookie': sessionCookie(value, sessionSeconds, !local) });
 }
 
 export async function readLocalEnv() {
@@ -223,17 +270,22 @@ export async function portfolioApi(request, { local = false, client = 'local' } 
     const settings = local ? await readLocalEnv() : {};
     const user = settings.ADMIN_USER ?? process.env.ADMIN_USER;
     const password = settings.ADMIN_PASSWORD ?? process.env.ADMIN_PASSWORD;
+    const setupSecret = process.env.ADMIN_SETUP_SECRET;
     if (!user || !password || password.length < 16) {
       throw new RequestError(503, 'Configure ADMIN_USER e uma ADMIN_PASSWORD com pelo menos 16 caracteres.');
     }
     if (!local && !process.env.BLOB_READ_WRITE_TOKEN) throw new RequestError(503, 'Conecte o armazenamento Vercel Blob ao projeto.');
-    if (method === 'GET' && action === 'session') return json({ signedIn: hasSession(request, user, password), local });
+    if (!local && !/^[a-f0-9]{64}$/.test(setupSecret ?? '')) {
+      throw new RequestError(503, 'O primeiro acesso ao painel ainda precisa ser configurado.');
+    }
+    const sessionKey = local ? password : createHmac('sha256', setupSecret).update('admin-session').digest();
+    if (method === 'GET' && action === 'session') return json({ signedIn: hasSession(request, user, sessionKey), local });
 
     // The Blob completion webhook authenticates itself inside handleUpload.
     if (!local && method === 'POST' && action === 'upload') {
       const body = await readJson(request);
       if (body?.type === 'blob.generate-client-token') {
-        if (request.headers.get('origin') !== url.origin || !hasSession(request, user, password)) {
+        if (request.headers.get('origin') !== url.origin || !hasSession(request, user, sessionKey)) {
           throw new RequestError(401, 'Entre no painel para enviar arquivos.');
         }
       } else if (body?.type !== 'blob.upload-completed') throw invalid();
@@ -256,21 +308,39 @@ export async function portfolioApi(request, { local = false, client = 'local' } 
 
     if (method !== 'POST' && method !== 'PUT') throw new RequestError(405, 'Método indisponível.');
     if (request.headers.get('origin') !== url.origin) throw new RequestError(403, 'Origem inválida.');
-    if (method === 'POST' && action === 'login') {
+    if (method === 'POST' && (action === 'login' || (!local && action === 'choose-password'))) {
       rateLimit(client);
       const credentials = await readJson(request);
-      const validUser = typeof credentials?.user === 'string' && same(credentials.user, user);
-      const validPassword = typeof credentials?.password === 'string' && same(credentials.password, password);
-      if (!validUser || !validPassword) throw new RequestError(401, 'E-mail ou senha incorretos.');
+      if (typeof credentials?.user !== 'string' || !same(credentials.user, user)
+        || typeof credentials.password !== 'string' || credentials.password.length > 128) {
+        throw new RequestError(401, 'E-mail ou senha incorretos.');
+      }
+      const storage = local ? null : passwordStorage(setupSecret);
+      const chosen = storage ? await readChosenPassword(storage) : null;
+      if (action === 'choose-password' && chosen) {
+        throw new RequestError(409, 'A senha já foi definida. Volte para entrar com sua nova senha.');
+      }
+      const validPassword = chosen
+        ? timingSafeEqual(chosen.hash, await derivePassword(credentials.password, chosen.salt, 32, passwordOptions))
+        : same(credentials.password, password);
+      if (!validPassword) throw new RequestError(401, 'E-mail ou senha incorretos.');
+      if (action === 'choose-password') {
+        const next = credentials.newPassword;
+        if (typeof next !== 'string' || next.length < 16 || next.length > 128 || !next.trim() || same(next, password)) {
+          throw new RequestError(400, 'Escolha uma senha diferente da provisória, com 16 a 128 caracteres.');
+        }
+        await saveChosenPassword(storage, next);
+      } else if (storage && !chosen) {
+        attempts.delete(client);
+        return json({ passwordChangeRequired: true });
+      }
       attempts.delete(client);
-      const expiration = Date.now() + sessionSeconds * 1000;
-      const value = `${expiration}.${sessionSignature(expiration, user, password)}`;
-      return json({ signedIn: true, local }, 200, { 'Set-Cookie': sessionCookie(value, sessionSeconds, !local) });
+      return loginResponse(user, sessionKey, local);
     }
     if (method === 'POST' && action === 'logout') {
       return json({ signedIn: false }, 200, { 'Set-Cookie': sessionCookie('', 0, !local) });
     }
-    if (!hasSession(request, user, password)) throw new RequestError(401, 'Sua sessão expirou. Entre novamente.');
+    if (!hasSession(request, user, sessionKey)) throw new RequestError(401, 'Sua sessão expirou. Entre novamente.');
     if (method === 'PUT' && action === 'content') {
       const data = await readJson(request);
       if (!data || (data.revision !== null && (typeof data.revision !== 'string' || data.revision.length > 200))) throw invalid();

@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f5eee4">
   <title>Área administrativa · Tahara Films</title>
-  <link rel="stylesheet" href="/admin.css?v=5">
-  <script type="module" src="/admin.js?v=4"></script>
+  <link rel="stylesheet" href="/admin.css?v=6">
+  <script type="module" src="/admin.js?v=5"></script>
 </head>
 <body>
   <main class="shell">
@@ -41,6 +41,23 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
         </button>
         <p class="notice" id="login-status" role="status"></p>
+      </form>
+    </section>
+    <section id="first-login" class="login" aria-labelledby="first-login-title" hidden>
+      <h1 id="first-login-title">Crie sua senha</h1>
+      <p>Escolha uma senha com pelo menos 16 caracteres para entrar no painel.</p>
+      <form id="first-login-form">
+        <label class="login-field">
+          <input name="newPassword" type="password" required minlength="16" maxlength="128" autocomplete="new-password" placeholder=" ">
+          <span>Nova senha</span>
+        </label>
+        <label class="login-field">
+          <input name="confirmPassword" type="password" required minlength="16" maxlength="128" autocomplete="new-password" placeholder=" ">
+          <span>Confirme a nova senha</span>
+        </label>
+        <button class="primary" type="submit">Salvar senha e entrar</button>
+        <button class="outline" type="button" id="back-to-login">Voltar ao login</button>
+        <p class="notice" id="first-login-status" role="status"></p>
       </form>
     </section>
     <section id="dashboard" aria-label="Edição do portfólio" hidden>
