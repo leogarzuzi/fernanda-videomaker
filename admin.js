@@ -17,6 +17,8 @@ const save = find('#save');
 const logout = find('#logout');
 const loginStatus = find('#login-status');
 const saveStatus = find('#save-status');
+const saveFeedback = find('#save-feedback');
+const saveFeedbackLabel = find('#save-feedback-label');
 const feedbackFields = find('#feedback-fields');
 const feedbackEmpty = find('#feedback-empty');
 const addFeedback = find('#add-feedback');
@@ -26,6 +28,7 @@ let revision = null;
 let draft;
 let dirty = false;
 let busy = false;
+let saveFeedbackTimer;
 
 async function api(action, options = {}) {
   const response = await fetch('/api/portfolio?action=' + action, options);
@@ -42,6 +45,26 @@ function notice(element, message, error = false) {
   element.textContent = message;
   element.toggleAttribute('data-error', error);
 }
+
+function showSaving() {
+  clearTimeout(saveFeedbackTimer);
+  saveFeedback.dataset.state = 'saving';
+  saveFeedbackLabel.textContent = 'Salvando…';
+  saveFeedback.showModal();
+  return performance.now();
+}
+
+async function showSaved(started) {
+  const remaining = 500 - (performance.now() - started);
+  if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining));
+  saveFeedback.dataset.state = 'done';
+  saveFeedbackLabel.textContent = 'Concluído';
+  saveFeedbackTimer = setTimeout(() => saveFeedback.close(), 2200);
+}
+
+saveFeedback.addEventListener('cancel', event => {
+  if (saveFeedback.dataset.state === 'saving') event.preventDefault();
+});
 
 function setDirty(value) {
   if (dirty !== value) {
@@ -284,13 +307,16 @@ firstLoginForm.addEventListener('submit', async event => {
   }
   const submit = firstLoginForm.querySelector('button[type=submit]');
   submit.disabled = backToLogin.disabled = true;
-  notice(firstLoginStatus, 'Salvando sua senha…');
+  notice(firstLoginStatus, '');
+  const started = showSaving();
   try {
     const session = await api('choose-password', jsonRequest('POST', { ...provisionalCredentials, newPassword }));
     provisionalCredentials = undefined;
     firstLoginForm.reset();
     await showDashboard(session);
+    await showSaved(started);
   } catch (error) {
+    saveFeedback.close();
     notice(firstLoginStatus, error.message, true);
   } finally {
     submit.disabled = backToLogin.disabled = false;
@@ -368,17 +394,17 @@ editor.addEventListener('submit', async event => {
   if (busy || !dirty) return;
   busy = true;
   editorFields.disabled = logout.disabled = save.disabled = true;
-  notice(saveStatus, 'Salvando…');
+  const started = showSaving();
   try {
     for (const selection of selections.values()) {
       const { record, key, kind, file, previewUrl } = selection;
-      notice(saveStatus, `Enviando ${file.name}…`);
+      saveFeedbackLabel.textContent = 'Enviando arquivos…';
       const duration = kind === 'video' ? await getDuration(previewUrl, file.name) : null;
       selection.uploadedUrl ??= await uploadSelection(selection);
       record[key] = selection.uploadedUrl;
       if ('duration' in record) record.duration = duration;
     }
-    notice(saveStatus, 'Salvando alterações…');
+    saveFeedbackLabel.textContent = 'Salvando…';
     const result = await api('content', jsonRequest('PUT', { revision, content: draft }));
     revision = result.revision;
     for (const [input, selection] of selections) {
@@ -390,7 +416,9 @@ editor.addEventListener('submit', async event => {
     selections.clear();
     setDirty(false);
     notice(saveStatus, 'Alterações salvas no portfólio.');
+    await showSaved(started);
   } catch (error) {
+    saveFeedback.close();
     notice(saveStatus, error.message, true);
   } finally {
     busy = false;

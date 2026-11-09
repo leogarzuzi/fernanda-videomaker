@@ -273,8 +273,48 @@ details .field-list { padding: .25rem 1rem 1rem; }
   border-radius: 999px;
 }
 .save-button .fan-mark { width: 1.35rem; stroke-width: 3; }
+#save-feedback {
+  box-sizing: border-box;
+  width: min(17rem, calc(100vw - 2rem));
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1rem 3rem #3c0c0626;
+  text-align: center;
+}
+#save-feedback::backdrop { background: #3c0c0633; }
+#save-feedback-label {
+  margin: .65rem 0 0;
+  font: 400 1.7rem/1.15 var(--serif);
+}
+.save-fans {
+  display: flex;
+  justify-content: center;
+  gap: .55rem;
+}
+#save-feedback .fan-mark { width: 3rem; color: #fe0b00; stroke-width: 2.4; }
+.save-fans .fan-mark {
+  --fan-angle: -90deg;
+  --fan-turn: 1turn;
+  transform: rotate(var(--fan-angle));
+}
+.save-fans .fan-mark + .fan-mark {
+  --fan-angle: 90deg;
+  --fan-turn: -1turn;
+}
+.save-done-fan { margin: auto; }
+#save-feedback[data-state="saving"] .save-done-fan,
+#save-feedback[data-state="done"] .save-fans { display: none; }
+@keyframes save-fan-turn {
+  to { transform: rotate(calc(var(--fan-angle) + var(--fan-turn))); }
+}
 @media (prefers-reduced-motion: no-preference) {
   .save-button { transition: background-color .3s ease; }
+  #save-feedback[open][data-state="saving"] .save-fans .fan-mark {
+    animation: save-fan-turn 1.1s linear infinite;
+  }
 }
 @media (max-width: 720px) {
   .editor-section {

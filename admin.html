@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f5eee4">
   <title>Área administrativa · Tahara Films</title>
-  <link rel="stylesheet" href="/admin.css?v=7">
-  <script type="module" src="/admin.js?v=5"></script>
+  <link rel="stylesheet" href="/admin.css?v=8">
+  <script type="module" src="/admin.js?v=6"></script>
 </head>
 <body>
   <main class="shell">
@@ -127,5 +127,13 @@
       </form>
     </section>
   </main>
+  <dialog id="save-feedback" aria-labelledby="save-feedback-label">
+    <div class="save-fans" aria-hidden="true">
+      <svg class="fan-mark" viewBox="0 0 120 100"><use href="#admin-fan"/></svg>
+      <svg class="fan-mark" viewBox="0 0 120 100"><use href="#admin-fan"/></svg>
+    </div>
+    <svg class="fan-mark save-done-fan" viewBox="0 0 120 100" aria-hidden="true"><use href="#admin-fan"/></svg>
+    <p id="save-feedback-label" role="status"></p>
+  </dialog>
 </body>
 </html>
