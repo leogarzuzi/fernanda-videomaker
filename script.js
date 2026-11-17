@@ -1,6 +1,7 @@
 document.documentElement.classList.add('js');
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-const heroVideo=document.querySelector('#hero-video');const previews=[...document.querySelectorAll('.film-preview')];
+const heroVideo=document.querySelector('#hero-video');
+let previews=[...document.querySelectorAll('.film-preview')];
 let previewsEnabled=!reducedMotion.matches,heroEnabled=!reducedMotion.matches,dialogOpen=false;
 const pendingPlayback=new WeakSet();
 async function safePlay(video){
@@ -185,7 +186,7 @@ document.querySelectorAll('dialog').forEach(modal=>{
   modal.addEventListener('close',()=>{dialogMotions.get(modal)?.animation?.cancel();dialogMotions.delete(modal);modal.classList.remove('modal-arriving','modal-leaving');});
 });
 const dialog=document.querySelector('#film-dialog'),player=document.querySelector('#film-player'),playbackMessage=document.querySelector('#playback-message');let previousFocus;
-document.querySelectorAll('[data-film]').forEach(button=>button.addEventListener('click',async()=>{const card=button.closest('.film-card');const video=card.querySelector('.film-preview');const title=card.querySelector('.film-story h3').textContent;previousFocus=button;document.querySelector('#film-title').textContent=title;player.src=video.getAttribute('src')||video.querySelector('source').src;if(video.poster)player.poster=video.poster;else player.removeAttribute('poster');player.setAttribute('aria-label',title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();openSoftDialog(dialog);try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}}));player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
+document.querySelector('.film-grid').addEventListener('click',async event=>{const button=event.target.closest('[data-film]');if(!button)return;const card=button.closest('.film-card');const video=card.querySelector('.film-preview');const title=card.querySelector('.film-story h3').textContent;previousFocus=button;document.querySelector('#film-title').textContent=title;player.src=video.getAttribute('src')||video.querySelector('source').src;if(video.poster)player.poster=video.poster;else player.removeAttribute('poster');player.setAttribute('aria-label',title);player.muted=false;player.currentTime=0;playbackMessage.hidden=true;dialogOpen=true;syncMedia();openSoftDialog(dialog);try{await player.play();}catch{playbackMessage.textContent='Toque no botão de reprodução do vídeo para começar.';playbackMessage.hidden=false;}});player.addEventListener('error',()=>{playbackMessage.textContent='Não foi possível carregar este filme. Confira sua conexão e tente abrir novamente.';playbackMessage.hidden=false;});
 dialog.addEventListener('closing',()=>player.pause());
 dialog.querySelector('.close-player').addEventListener('click',()=>closeSoftDialog(dialog));dialog.addEventListener('close',()=>{player.pause();player.removeAttribute('src');player.load();dialogOpen=false;syncMedia();previousFocus?.focus({preventScroll:true});});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeSoftDialog(dialog);}});
 const revealObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}});},{threshold:.07});document.querySelectorAll('[data-reveal]').forEach(el=>revealObserver.observe(el));
@@ -384,7 +385,7 @@ feedbackDialog.addEventListener('click',event=>{
 // Desktop film sequence: copy arrives first; each portrait rises afterward.
 // Native page scrolling is preserved; mobile uses its original card layout.
 const desktopFilmStories=matchMedia('(min-width:701px)');
-const filmStories=[...document.querySelectorAll('.film-card')];
+let filmStories=[...document.querySelectorAll('.film-card')];
 const clampProgress=value=>Math.max(0,Math.min(1,value));
 let filmStoryFrame=false;
 function paintFilmStories(){
@@ -498,8 +499,24 @@ paintFloatingContact();
 // The published content is optional; the original page renders immediately.
 fetch('/api/portfolio').then(response=>response.ok?response.json():null).then(async saved=>{
   if(!saved?.content)return;
-  const {applyContent}=await import('/portfolio-content.js?v=2');
+  const {applyContent}=await import('/portfolio-content.js?v=3');
   applyContent(saved.content);
   measureFeedback();
   syncMedia();
 }).catch(()=>{});
+
+
+// Reconnect playback and scroll observers after saved work cards are rebuilt.
+document.addEventListener('portfolio-content-updated', () => {
+  for (const video of previews) {
+    video.pause();
+    mediaObserver.unobserve(video);
+  }
+  for (const card of filmStories) revealObserver.unobserve(card);
+  previews = [...document.querySelectorAll('.film-preview')];
+  filmStories = [...document.querySelectorAll('.film-card')];
+  for (const video of previews) mediaObserver.observe(video);
+  for (const card of filmStories) revealObserver.observe(card);
+  queueFilmStories();
+  queueFloatingContact();
+});

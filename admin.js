@@ -1,5 +1,5 @@
-import { fields, maxFeedbackCards, mediaTypes } from './portfolio-fields.js?v=2';
-import { readOriginal } from './portfolio-content.js?v=2';
+import { fields, maxFeedbackCards, maxFilmCards, mediaTypes } from './portfolio-fields.js?v=3';
+import { readOriginal } from './portfolio-content.js?v=3';
 
 const find = selector => document.querySelector(selector);
 const login = find('#login');
@@ -22,6 +22,10 @@ const saveFeedbackLabel = find('#save-feedback-label');
 const feedbackFields = find('#feedback-fields');
 const feedbackEmpty = find('#feedback-empty');
 const addFeedback = find('#add-feedback');
+const filmFields = find('#film-fields');
+const filmEmpty = find('#film-empty');
+const filmCount = find('#film-count');
+const addFilm = find('#add-film');
 const selections = new Map();
 let local = false;
 let revision = null;
@@ -177,6 +181,101 @@ function editorDetail(record, schema, title) {
   return detail;
 }
 
+function syncFilmEditor() {
+  [...filmFields.children].forEach((entry, index) => {
+    const title = draft.films[index].title.trim() || 'Novo trabalho';
+    entry.querySelector('summary').textContent = `${index + 1}. ${title}`;
+    entry.querySelector('.film-position').textContent = index % 2 === 0
+      ? 'Vídeo à esquerda · texto à direita'
+      : 'Texto à esquerda · vídeo à direita';
+    const up = entry.querySelector('.film-up');
+    const down = entry.querySelector('.film-down');
+    up.disabled = index === 0;
+    down.disabled = index === draft.films.length - 1;
+    up.setAttribute('aria-label', `Mover ${title} para cima`);
+    down.setAttribute('aria-label', `Mover ${title} para baixo`);
+    entry.querySelector('.film-remove').setAttribute('aria-label', `Excluir ${title}`);
+  });
+  filmEmpty.hidden = draft.films.length > 0;
+  filmCount.textContent = `${draft.films.length} de ${maxFilmCards} trabalhos`;
+  addFilm.disabled = draft.films.length >= maxFilmCards;
+}
+
+function moveFilm(record, entry, direction) {
+  const index = draft.films.indexOf(record);
+  const destination = index + direction;
+  if (destination < 0 || destination >= draft.films.length) return;
+  const neighbor = filmFields.children[destination];
+  draft.films.splice(index, 1);
+  draft.films.splice(destination, 0, record);
+  neighbor.insertAdjacentElement(direction < 0 ? 'beforebegin' : 'afterend', entry);
+  syncFilmEditor();
+  setDirty(true);
+  notice(saveStatus, 'Ordem alterada. Salve para atualizar o portfólio.');
+  entry.querySelector('summary').focus();
+}
+
+function filmDetail(record) {
+  const entry = document.createElement('article');
+  entry.className = 'film-editor-card';
+  const detail = editorDetail(record, fields.film, record.title || 'Novo trabalho');
+  detail.addEventListener('input', syncFilmEditor);
+  const toolbar = document.createElement('div');
+  toolbar.className = 'film-toolbar';
+  const position = document.createElement('p');
+  position.className = 'film-position';
+  const actions = document.createElement('div');
+  actions.className = 'film-actions';
+  for (const [className, label, direction] of [
+    ['film-up', '↑', -1],
+    ['film-down', '↓', 1],
+  ]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `outline ${className}`;
+    button.textContent = label;
+    button.addEventListener('click', () => moveFilm(record, entry, direction));
+    actions.append(button);
+  }
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'outline film-remove';
+  remove.textContent = 'Excluir';
+  remove.addEventListener('click', () => {
+    const nextFocus = entry.nextElementSibling?.querySelector('summary')
+      ?? entry.previousElementSibling?.querySelector('summary') ?? addFilm;
+    for (const input of entry.querySelectorAll('input[type=file]')) {
+      const selection = selections.get(input);
+      if (selection) URL.revokeObjectURL(selection.previewUrl);
+      selections.delete(input);
+    }
+    entry.querySelector('video')?.pause();
+    draft.films.splice(draft.films.indexOf(record), 1);
+    entry.remove();
+    syncFilmEditor();
+    setDirty(true);
+    notice(saveStatus, 'Trabalho excluído da lista. Salve para atualizar o portfólio.');
+    nextFocus.focus();
+  });
+  actions.append(remove);
+  toolbar.append(position, actions);
+  entry.append(detail, toolbar);
+  return entry;
+}
+
+addFilm.addEventListener('click', () => {
+  if (draft.films.length >= maxFilmCards) return;
+  const record = { video: '', duration: '00:00', theme: '', title: '', summary: '', description: '' };
+  draft.films.push(record);
+  const entry = filmDetail(record);
+  entry.querySelector('details').open = true;
+  filmFields.append(entry);
+  syncFilmEditor();
+  setDirty(true);
+  notice(saveStatus, 'Escolha o vídeo e preencha os textos do novo trabalho.');
+  entry.querySelector('summary').focus();
+});
+
 function syncFeedbackEditor() {
   [...feedbackFields.children].forEach((detail, index) => {
     const title = `Cartão ${index + 1}`;
@@ -228,7 +327,8 @@ function render() {
   for (const selection of selections.values()) URL.revokeObjectURL(selection.previewUrl);
   selections.clear();
   find('#hero-fields').replaceChildren(renderGroup(draft.hero, fields.hero));
-  find('#film-fields').replaceChildren(...draft.films.map(film => editorDetail(film, fields.film, film.title)));
+  filmFields.replaceChildren(...draft.films.map(filmDetail));
+  syncFilmEditor();
   find('#about-fields').replaceChildren(renderGroup(draft.about, fields.about));
   feedbackFields.replaceChildren(...draft.feedback.map(feedbackDetail));
   syncFeedbackEditor();

@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f5eee4">
   <title>Área administrativa · Tahara Films</title>
-  <link rel="stylesheet" href="/admin.css?v=8">
-  <script type="module" src="/admin.js?v=6"></script>
+  <link rel="stylesheet" href="/admin.css?v=9">
+  <script type="module" src="/admin.js?v=7"></script>
 </head>
 <body>
   <main class="shell">
@@ -80,7 +80,13 @@
           </section>
           <section class="editor-section" id="filmes">
             <h2>Histórias <em>em cena.</em></h2>
-            <div class="section-fields" id="film-fields"></div>
+            <div class="section-fields">
+              <p>Adicione seus trabalhos e organize a ordem com as setas. No computador, vídeo e texto alternam de lado automaticamente.</p>
+              <p id="film-count" class="film-count"></p>
+              <div id="film-fields"></div>
+              <p id="film-empty" hidden>Nenhum trabalho. Adicione um vídeo para exibir esta seção no portfólio.</p>
+              <button class="outline add-card" type="button" id="add-film"><span aria-hidden="true">+</span> Adicionar trabalho</button>
+            </div>
             <figure class="section-guide">
               <img src="/assets/admin-guides/filmes.jpg" width="1100" height="720" loading="lazy" alt="Um dos filmes do portfólio, com o vídeo ao lado do tema, título e descrição.">
               <figcaption>Referência da seção</figcaption>

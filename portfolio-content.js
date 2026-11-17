@@ -3,6 +3,49 @@ const lines = (element) => [...element.childNodes].map(node =>
   node.nodeName === 'BR' ? '\n' : node.textContent
 ).join('');
 const paragraphs = (elements) => [...elements].map(element => element.textContent).join('\n\n');
+let filmTemplate;
+let originalFilmIntroduction;
+
+function applyFilms(films) {
+  const section = document.querySelector('#filmes');
+  const grid = section.querySelector('.film-grid');
+  filmTemplate ??= grid.querySelector('.film-card').cloneNode(true);
+  const introduction = section.querySelector('.work-heading > p');
+  originalFilmIntroduction ??= introduction.cloneNode(true);
+  const cards = films.map((film, index) => {
+    const card = filmTemplate.cloneNode(true);
+    card.classList.toggle('offset', index % 2 === 1);
+    card.classList.remove('visible');
+    const story = card.querySelector('.film-story');
+    const video = card.querySelector('.film-preview');
+    changeVideo(video, film.video);
+    if (film.video.startsWith('assets/')) {
+      video.poster = film.video.replace(/\.mp4$/, '-poster.jpg');
+    }
+    for (const heading of card.querySelectorAll('h3')) heading.textContent = film.title;
+    story.querySelector('.eyebrow').textContent = film.theme;
+    card.querySelector('.film-topline span').textContent = film.theme;
+    card.querySelector('.film-topline span:last-child').textContent = film.duration;
+    card.querySelector('.film-meta p').textContent = film.summary;
+    const button = card.querySelector('.film-open');
+    button.dataset.film = String(index + 1);
+    button.setAttribute('aria-label', `Assistir ao filme ${film.title}`);
+    replaceParagraphs(story, film.description);
+    return card;
+  });
+  grid.replaceChildren(...cards);
+  section.hidden = films.length === 0;
+  for (const link of document.querySelectorAll('.site-header a[href="#filmes"], .menu-link[href="#filmes"]')) {
+    link.hidden = films.length === 0;
+  }
+  const invitation = document.querySelector('.hero-explore');
+  const label = films.length ? 'EXPLORE MEUS FILMES' : 'VAMOS CONVERSAR';
+  invitation.href = films.length ? '#filmes' : '#contato';
+  invitation.setAttribute('aria-label', label);
+  invitation.querySelector('.explore-label').textContent = label;
+  if (films.length === 4) introduction.replaceChildren(...originalFilmIntroduction.cloneNode(true).childNodes);
+  else multiline(introduction, `${films.length} ${films.length === 1 ? 'filme' : 'filmes'}. Um olhar para cada história.\nUm pouco do que já ganhou vida por aqui.`);
+}
 
 export function readOriginal(root) {
   const about = root.querySelector('.about-bio');
@@ -61,18 +104,7 @@ function replaceParagraphs(container, text, before = null) {
 
 export function applyContent(content) {
   changeVideo(document.querySelector('#hero-video'), content.hero.video);
-  filmCards(document).forEach((card, i) => {
-    const film = content.films[i];
-    const story = card.querySelector('.film-story');
-    changeVideo(card.querySelector('video'), film.video);
-    for (const heading of card.querySelectorAll('h3')) heading.textContent = film.title;
-    story.querySelector('.eyebrow').textContent = film.theme;
-    card.querySelector('.film-topline span').textContent = film.theme;
-    card.querySelector('.film-topline span:last-child').textContent = film.duration;
-    card.querySelector('.film-meta p').textContent = film.summary;
-    card.querySelector('.film-open').setAttribute('aria-label', `Assistir ao filme ${film.title}`);
-    replaceParagraphs(story, film.description);
-  });
+  applyFilms(content.films);
 
   const about = document.querySelector('.about-bio');
   const heading = about.querySelector('h3');
@@ -112,6 +144,7 @@ export function applyContent(content) {
     group.replaceChildren(...cards);
   }
   applyContact(content.contact);
+  document.dispatchEvent(new Event('portfolio-content-updated'));
 }
 
 function applyContact({ instagram, whatsapp, email }) {

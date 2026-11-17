@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { parseEnv, promisify } from 'node:util';
 import { BlobNotFoundError, BlobPreconditionFailedError, get, head, put } from '@vercel/blob';
 import { handleUpload } from '@vercel/blob/client';
-import { fields, maxFeedbackCards, mediaTypes } from './portfolio-fields.js';
+import { fields, maxFeedbackCards, maxFilmCards, mediaTypes } from './portfolio-fields.js';
 
 export const localData = fileURLToPath(new URL('./.portfolio-data/', import.meta.url));
 const contentFile = 'portfolio/content.json';
@@ -156,7 +156,7 @@ function validateGroup(group, schema, local) {
 }
 
 function validateContent(data, local) {
-  if (!data || data.films?.length !== 4 || !Array.isArray(data.films)
+  if (!data || !Array.isArray(data.films) || data.films.length > maxFilmCards
     || !Array.isArray(data.feedback) || data.feedback.length > maxFeedbackCards) throw invalid();
   const contact = validateGroup(data.contact, fields.contact, local);
   const whatsapp = contact.whatsapp.replace(/[\s().-]/g, '');

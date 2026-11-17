@@ -4,6 +4,7 @@ export const mediaTypes = {
 };
 
 export const maxFeedbackCards = 24;
+export const maxFilmCards = 24;
 
 export const fields = {
   hero: { video: ['Vídeo de abertura', 'video'] },

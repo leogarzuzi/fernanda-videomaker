@@ -1,4 +1,5 @@
 @font-face{font-family:"Amanojaku";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/amanojaku-demo.woff2") format("woff2")}
+.menu-link[hidden],.selected[hidden]{display:none!important}
 @font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/anton-latin.woff2") format("woff2")}
 @font-face{font-family:"Mrs Saint Delafield";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/mrs-saint-delafield-latin.woff2") format("woff2")}
 @font-face{font-family:"Bebas Neue";font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/bebas-neue-latin.woff2") format("woff2")}
